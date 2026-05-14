@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useLocale } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "@/navigation";
 
 type ToolCardProps = {
   slug: string;
@@ -16,7 +15,6 @@ type ToolCardProps = {
   avgRating?: number | null;
   reviewCount?: number;
   categoryName?: string;
-  locale?: string;
   className?: string;
 };
 
@@ -29,11 +27,8 @@ export function ToolCard({
   avgRating,
   reviewCount = 0,
   categoryName,
-  locale: propLocale,
   className,
 }: ToolCardProps) {
-  const hookLocale = useLocale();
-  const locale = propLocale ?? hookLocale;
   const pricingLabel =
     pricingModel === "FREE"
       ? "Free"
@@ -44,7 +39,7 @@ export function ToolCard({
       : "Paid";
 
   return (
-    <Link href={`/${locale}/tools/${slug}`} className="no-style block group">
+    <Link href={`/tools/${slug}`} className="no-style block group">
       <Card className={cn("card-hover h-full border-border/50", className)}>
         <CardContent className="p-5 flex flex-col h-full">
           {/* Header */}

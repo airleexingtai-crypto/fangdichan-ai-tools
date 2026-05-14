@@ -10,6 +10,9 @@ import { supabase } from "@/lib/supabase";
 
 type Props = { params: Promise<{ locale: string }> };
 
+// localePrefix: "as-needed" — default locale (en) needs NO prefix
+const lhref = (locale: string, path: string) => locale === "en" ? path : `/${locale}${path}`;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
@@ -73,13 +76,13 @@ export default async function HomePage({ params }: Props) {
             {t("hero_subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={`/${locale}/tools`} className="no-style">
+            <Link href={lhref(locale, "/tools")} className="no-style">
               <Button size="lg" className="text-base">
                 <Search className="mr-2 h-4 w-4" />
                 {t("browse_tools")}
               </Button>
             </Link>
-            <Link href={`/${locale}/compare`} className="no-style">
+            <Link href={lhref(locale, "/compare")} className="no-style">
               <Button variant="outline" size="lg" className="text-base">
                 <BarChart3 className="mr-2 h-4 w-4" />
                 {t("view_comparisons")}
@@ -105,7 +108,7 @@ export default async function HomePage({ params }: Props) {
             <h2 className="text-2xl font-bold">{t("explore_categories")}</h2>
             <p className="text-muted-foreground mt-1">{t("find_tools_desc")}</p>
           </div>
-          <Link href={`/${locale}/categories`} className="no-style">
+          <Link href={lhref(locale, "/categories")} className="no-style">
             <Button variant="ghost" size="sm">
               {t("view_all")} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -114,7 +117,7 @@ export default async function HomePage({ params }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {categories.map((cat) => (
-            <Link key={cat.slug} href={`/${locale}/categories/${cat.slug}`} className="no-style group">
+            <Link key={cat.slug} href={lhref(locale, `/categories/${cat.slug}`)} className="no-style group">
               <div className="card-hover rounded-lg border border-border/50 bg-card p-4 text-center h-full">
                 <div className="text-2xl mb-2">{cat.icon}</div>
                 <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
@@ -134,7 +137,7 @@ export default async function HomePage({ params }: Props) {
             <h2 className="text-2xl font-bold">{t("trending_tools")}</h2>
             <p className="text-muted-foreground mt-1">{t("trending_desc")}</p>
           </div>
-          <Link href={`/${locale}/tools`} className="no-style">
+          <Link href={lhref(locale, "/tools")} className="no-style">
             <Button variant="ghost" size="sm">
               {t("view_all_tools")} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -152,7 +155,6 @@ export default async function HomePage({ params }: Props) {
               pricingModel={tool.pricing_model || "FREE"}
               avgRating={tool.avg_rating}
               reviewCount={tool.review_count}
-              locale={locale}
             />
           ))}
         </div>

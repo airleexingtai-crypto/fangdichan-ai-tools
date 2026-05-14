@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname } from "@/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,36 +14,27 @@ const NAV_KEYS = ["tools", "categories", "compare", "tutorials", "stats", "blog"
 
 export function Header() {
   const { theme, toggle } = useTheme();
-  const pathname = usePathname();
+  const pathname = usePathname(); // from @/navigation — no locale prefix
   const locale = useLocale();
   const t = useTranslations("nav");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Build a locale-aware href: only add prefix for non-default (zh) locale
-  const lhref = useCallback(
-    (path: string) => (locale === "en" ? path : `/${locale}${path}`),
-    [locale],
-  );
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = lhref(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      window.location.href = `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`;
     }
   };
 
-  // Language switcher
   const switchTo = locale === "en" ? "zh" : "en";
-  const basePath = locale === "en" ? pathname : (pathname.replace(new RegExp(`^/${locale}`), "") || "/");
-  const targetHref = switchTo === "en" ? basePath : `/${switchTo}${basePath === "/" ? "" : basePath}`;
 
   return (
     <header className="sticky top-0 z-50 glass-nav border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={lhref("/")} className="flex items-center gap-2 no-style shrink-0">
+          <Link href="/" className="flex items-center gap-2 no-style shrink-0">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">AI</span>
             </div>
@@ -57,13 +47,14 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-1">
             {NAV_KEYS.map((key) => {
               const href = `/${key}`;
+              const fullHref = locale === "en" ? href : `/${locale}${href}`;
               return (
                 <Link
                   key={key}
-                  href={lhref(href)}
+                  href={href}
                   className={cn(
                     "no-style px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                    pathname.startsWith(lhref(href))
+                    (pathname === href || pathname.startsWith(href + "/"))
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/5",
                   )}
@@ -76,6 +67,7 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {/* Search Toggle */}
             {searchOpen ? (
               <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-1">
                 <Input
@@ -97,7 +89,7 @@ export function Header() {
             )}
 
             {/* Language Toggle */}
-            <Link href={targetHref} className="no-style">
+            <Link href={pathname} locale={switchTo} className="no-style">
               <Button variant="ghost" size="sm" className="h-9 text-xs font-medium">
                 {switchTo === "zh" ? "中文" : "EN"}
               </Button>
@@ -129,10 +121,10 @@ export function Header() {
                     return (
                       <Link
                         key={key}
-                        href={lhref(href)}
+                        href={href}
                         className={cn(
                           "no-style px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                          pathname.startsWith(lhref(href))
+                          (pathname === href || pathname.startsWith(href + "/"))
                             ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:text-foreground",
                         )}
@@ -142,7 +134,7 @@ export function Header() {
                     );
                   })}
                   <div className="mt-4 pt-4 border-t border-border">
-                    <Link href={targetHref} className="no-style">
+                    <Link href={pathname} locale={switchTo} className="no-style">
                       <Button variant="outline" size="sm" className="w-full text-sm">
                         {switchTo === "zh" ? "切换到中文" : "Switch to English"}
                       </Button>

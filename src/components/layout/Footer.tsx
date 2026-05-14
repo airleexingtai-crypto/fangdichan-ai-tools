@@ -1,40 +1,36 @@
 "use client";
 
-import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+import { Link } from "@/navigation";
 
 export function Footer() {
-  const locale = useLocale();
   const t = useTranslations("footer");
-
-  // Only add locale prefix for non-default (zh) locale
-  const lhref = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
 
   const sections = [
     {
       title: t("resources"),
       links: [
-        { href: lhref("/tools"), label: t("all_tools") },
-        { href: lhref("/categories"), label: t("categories") },
-        { href: lhref("/tutorials"), label: t("tutorials") },
-        { href: lhref("/glossary"), label: t("glossary") },
+        { href: "/tools", label: t("all_tools") },
+        { href: "/categories", label: t("categories") },
+        { href: "/tutorials", label: t("tutorials") },
+        { href: "/glossary", label: t("glossary") },
       ],
     },
     {
       title: t("top_categories"),
       links: [
-        { href: lhref("/categories/crm"), label: t("ai_crm") },
-        { href: lhref("/categories/search"), label: t("ai_property_search") },
-        { href: lhref("/categories/analytics"), label: t("ai_analytics") },
-        { href: lhref("/categories/marketing"), label: t("ai_marketing") },
+        { href: "/categories/crm", label: t("ai_crm") },
+        { href: "/categories/search", label: t("ai_property_search") },
+        { href: "/categories/analytics", label: t("ai_analytics") },
+        { href: "/categories/marketing", label: t("ai_marketing") },
       ],
     },
     {
       title: t("legal"),
       links: [
-        { href: lhref("/privacy"), label: t("privacy_policy") },
-        { href: lhref("/terms"), label: t("terms") },
-        { href: lhref("/disclosure"), label: t("disclosure") },
+        { href: "/privacy", label: t("privacy_policy") },
+        { href: "/terms", label: t("terms") },
+        { href: "/disclosure", label: t("disclosure") },
       ],
     },
   ];
