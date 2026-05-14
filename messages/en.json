@@ -1,0 +1,96 @@
+{
+  "site": {
+    "name": "AI Tools for Real Estate",
+    "tagline": "Find, compare, and choose the best AI tools for real estate professionals"
+  },
+  "nav": {
+    "home": "Home",
+    "tools": "Tools",
+    "categories": "Categories",
+    "compare": "Compare",
+    "tutorials": "Tutorials",
+    "stats": "Statistics",
+    "blog": "Blog",
+    "glossary": "Glossary",
+    "search": "Search AI tools...",
+    "theme": "Toggle theme"
+  },
+  "home": {
+    "hero_title": "The AI Tool Directory for Real Estate Professionals",
+    "hero_subtitle": "Discover, compare, and choose the best AI tools for real estate. Structured comparisons, honest reviews, and up-to-date pricing — all in one place.",
+    "browse_tools": "Browse Tools",
+    "view_comparisons": "View Comparisons",
+    "popular_categories": "Popular Categories",
+    "trending_tools": "Trending Tools",
+    "latest_stats": "Latest Statistics"
+  },
+  "tool": {
+    "visit_site": "Visit Site",
+    "save": "Save",
+    "compare": "Compare",
+    "overview": "Overview",
+    "features": "Features",
+    "pricing": "Pricing",
+    "use_cases": "Use Cases",
+    "pros_cons": "Pros & Cons",
+    "faq": "FAQ",
+    "alternatives": "Alternatives",
+    "quick_summary": "Quick Summary",
+    "pricing_model": "Pricing Model",
+    "api_available": "API Available",
+    "founded": "Founded",
+    "category": "Category",
+    "rating": "Rating"
+  },
+  "comparison": {
+    "title": "{toolA} vs {toolB}",
+    "subtitle": "Which AI tool is right for you?",
+    "our_pick": "Our Pick",
+    "when_to_choose": "When to choose",
+    "last_updated": "Last updated"
+  },
+  "category": {
+    "browse_tools": "Browse {count} tools across {subcats} sub-categories",
+    "all": "All",
+    "sort_by": "Sort by",
+    "popular": "Popular",
+    "newest": "Newest",
+    "rating": "Rating",
+    "price_low": "Price: Low to High",
+    "grid_view": "Grid view",
+    "list_view": "List view"
+  },
+  "search": {
+    "results_for": "Results for",
+    "no_results": "No tools found matching your search.",
+    "placeholder": "Search AI tools for real estate..."
+  },
+  "stats": {
+    "source": "Source",
+    "sources": "Sources",
+    "what_this_means": "What This Means"
+  },
+  "tutorial": {
+    "estimated_time": "Estimated time",
+    "minutes": "min",
+    "difficulty": "Difficulty",
+    "tools_used": "Tools used"
+  },
+  "common": {
+    "read_more": "Read more",
+    "back": "Back",
+    "home": "Home",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "no_data": "No data available",
+    "view_all": "View all",
+    "last_updated": "Last updated",
+    "affiliate_disclosure": "When you click and make a purchase, we may earn a commission. This does not affect our rankings or reviews.",
+    "privacy_policy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "disclosure": "Affiliate Disclosure",
+    "about": "About",
+    "advertise": "Advertise",
+    "contact": "Contact"
+  }
+}

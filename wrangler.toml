@@ -1,0 +1,12 @@
+# Cloudflare Pages configuration
+# Docs: https://developers.cloudflare.com/pages/framework-guides/nextjs/
+
+name = "aitools-realestate"
+compatibility_date = "2025-05-13"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes handled by Pages Functions
+pages_build_output_dir = ".vercel/output/static"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }

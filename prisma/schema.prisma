@@ -1,0 +1,254 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ======== ENUMS ========
+
+enum ContentStatus {
+  DRAFT
+  AI_GENERATED
+  HUMAN_VERIFIED
+  PUBLISHED
+  NEEDS_UPDATE
+  ARCHIVED
+}
+
+enum PricingModel {
+  FREE
+  FREEMIUM
+  PAID
+  ENTERPRISE
+  FREE_TRIAL
+}
+
+// ======== CORE TABLES ========
+
+model Tool {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  name            String
+  tagline         String
+  logoUrl         String?
+  websiteUrl      String
+  affiliateUrl    String?
+  description     String        @db.Text
+  longDescription String?       @db.Text
+  pricingModel    PricingModel  @default(FREE)
+  pricingJson     Json?
+  featuresJson    Json?
+  prosJson        Json?
+  consJson        Json?
+  useCasesJson    Json?
+  foundedYear     Int?
+  apiAvailable    Boolean       @default(false)
+  avgRating       Decimal?      @db.Decimal(2, 1)
+  reviewCount     Int           @default(0)
+  status          ContentStatus @default(DRAFT)
+  verifiedAt      DateTime?
+  nextReviewAt    DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  categories      ToolCategory[]
+  alternatives    ToolAlternative[]  @relation("ToolAlternatives")
+  alternativeTo   ToolAlternative[]  @relation("AlternativeTools")
+  tutorials       TutorialTool[]
+  comparisons     ComparisonTool[]
+  translations    ToolTranslation[]
+  affiliateClicks AffiliateClick[]
+  reviews         Review[]
+
+  @@index([status, publishedAt])
+  @@index([slug])
+}
+
+model Category {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  description String        @db.Text
+  icon        String?
+  parentId    String?
+  parent      Category?     @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[]    @relation("CategoryTree")
+  tools       ToolCategory[]
+  tutorials   Tutorial[]
+  stats       StatPage[]
+  sortOrder   Int           @default(0)
+
+  @@index([parentId])
+}
+
+model ToolCategory {
+  toolId     String
+  categoryId String
+  tool       Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  isPrimary  Boolean  @default(false)
+
+  @@id([toolId, categoryId])
+}
+
+model ToolAlternative {
+  toolId        String
+  alternativeId String
+  tool          Tool   @relation("ToolAlternatives", fields: [toolId], references: [id], onDelete: Cascade)
+  alternative   Tool   @relation("AlternativeTools", fields: [alternativeId], references: [id], onDelete: Cascade)
+  reason        String?
+
+  @@id([toolId, alternativeId])
+}
+
+model Comparison {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  description   String        @db.Text
+  content       String?       @db.Text
+  winnerJson    Json?
+  matrixJson    Json?
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  tools         ComparisonTool[]
+
+  @@index([status, publishedAt])
+}
+
+model ComparisonTool {
+  comparisonId String
+  toolId       String
+  comparison   Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+  tool         Tool       @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@id([comparisonId, toolId])
+}
+
+model Tutorial {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  description      String        @db.Text
+  content          String?       @db.Text
+  estimatedMinutes Int?
+  difficulty       String?
+  status           ContentStatus @default(DRAFT)
+  publishedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  tools            TutorialTool[]
+  categoryId       String?
+  category         Category?     @relation(fields: [categoryId], references: [id])
+
+  @@index([status, publishedAt])
+}
+
+model TutorialTool {
+  tutorialId String
+  toolId     String
+  tutorial   Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+  tool       Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@id([tutorialId, toolId])
+}
+
+model StatPage {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  heroStat    String?
+  heroLabel   String?
+  content     String?       @db.Text
+  chartJson   Json?
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  sources     StatSource[]
+  categoryId  String?
+  category    Category?     @relation(fields: [categoryId], references: [id])
+
+  @@index([status, publishedAt])
+}
+
+model StatSource {
+  id         String   @id @default(cuid())
+  statPageId String
+  statPage   StatPage @relation(fields: [statPageId], references: [id], onDelete: Cascade)
+  title      String
+  url        String
+  publisher  String?
+  year       Int?
+  quoteText  String?  @db.Text
+
+  @@index([statPageId])
+}
+
+model Review {
+  id         String    @id @default(cuid())
+  toolId     String
+  tool       Tool      @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  authorName String
+  rating     Int
+  title      String?
+  body       String    @db.Text
+  source     String?
+  sourceUrl  String?
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([toolId])
+}
+
+model AffiliateClick {
+  id        String   @id @default(cuid())
+  toolId    String
+  tool      Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  pageSlug  String?
+  clickedAt DateTime @default(now())
+  ipHash    String?
+
+  @@index([toolId, clickedAt])
+}
+
+// ======== LOCALIZATION ========
+
+model ToolTranslation {
+  id          String  @id @default(cuid())
+  toolId      String
+  tool        Tool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  locale      String
+  name        String?
+  tagline     String?
+  description String? @db.Text
+
+  @@unique([toolId, locale])
+  @@index([locale])
+}
+
+model LocaleContent {
+  id     String @id @default(cuid())
+  key    String
+  locale String
+  value  String @db.Text
+
+  @@unique([key, locale])
+}
+
+// ======== VERIFICATION ========
+
+model ContentVerification {
+  id          String   @id @default(cuid())
+  contentType String
+  contentId   String
+  verifiedBy  String
+  verifiedAt  DateTime @default(now())
+  notes       String?  @db.Text
+  changesJson Json?
+}

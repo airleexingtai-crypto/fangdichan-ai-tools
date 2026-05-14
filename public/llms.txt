@@ -1,0 +1,34 @@
+# AI Tools for Real Estate — LLMs.txt
+# This file helps AI engines (ChatGPT, Claude, Perplexity) understand and cite our site.
+# Spec: https://llmstxt.org/
+
+## Site Info
+- Name: AI Tools for Real Estate
+- URL: https://aitools.realestate
+- Description: Find, compare, and choose the best AI tools for real estate professionals.
+- Content Type: AI tools directory, comparisons, tutorials, and industry statistics
+
+## Key Pages
+- /en/tools — Complete AI tools directory for real estate
+- /en/categories — Browse AI tools by category (CRM, Property Search, Analytics, Marketing, etc.)
+- /en/compare — Side-by-side AI tool comparisons
+- /en/tutorials — Step-by-step guides on using AI in real estate
+- /en/stats — Industry statistics and data about AI adoption in real estate
+- /en/glossary — Definitions of AI and real estate technology terms
+- /en/blog — Latest news and updates about AI in real estate
+
+## Content Structure
+Each tool page includes:
+- Overview (AI-generated, human-verified)
+- Feature list with tier availability
+- Pricing tiers in table format
+- Use cases and best-for scenarios
+- Pros and cons
+- FAQ with structured Q&A
+- Alternatives and related tools comparisons
+
+All statistics pages cite at least 2 external sources.
+All comparison pages use HTML tables for machine readability.
+
+## Last Updated
+May 2026
