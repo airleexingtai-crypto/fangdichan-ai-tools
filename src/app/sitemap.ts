@@ -3,9 +3,7 @@ import { supabase } from "@/lib/supabase";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
-  const locales = ["en", "zh"];
 
-  // Fetch all published content
   const [tools, categories, tutorials, stats, comparisons] = await Promise.all([
     supabase.from("Tool").select("slug, updated_at").eq("status", "PUBLISHED"),
     supabase.from("Category").select("slug, updated_at"),
@@ -14,33 +12,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     supabase.from("Comparison").select("slug, updated_at").eq("status", "PUBLISHED"),
   ]);
 
-  const staticPages: MetadataRoute.Sitemap = locales.flatMap((locale) => [
-    { url: `${baseUrl}/${locale}`, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    { url: `${baseUrl}/${locale}/tools`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${baseUrl}/${locale}/categories`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${baseUrl}/${locale}/compare`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-    { url: `${baseUrl}/${locale}/tutorials`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${baseUrl}/${locale}/stats`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${baseUrl}/${locale}/blog`, lastModified: new Date(), changeFrequency: "daily", priority: 0.6 },
-    { url: `${baseUrl}/${locale}/glossary`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
-    { url: `${baseUrl}/${locale}/search`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.3 },
-  ]);
+  // Helper: generate bilingual URLs — en has no prefix, zh uses /zh/ prefix
+  const bilingual = (path: string, lastmod: Date, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) => [
+    { url: `${baseUrl}${path}`, lastModified: lastmod, changeFrequency: freq, priority },
+    { url: `${baseUrl}/zh${path}`, lastModified: lastmod, changeFrequency: freq, priority: priority - 0.1 },
+  ];
 
-  const generateLocalePages = (items: any[], path: string, freq: string, pri: number) =>
-    locales.flatMap((locale) =>
-      (items || []).map((item: any) => ({
-        url: `${baseUrl}/${locale}/${path}/${item.slug}`,
-        lastModified: new Date(item.updated_at),
-        changeFrequency: freq as "weekly" | "monthly",
-        priority: pri,
-      }))
+  const staticPages: MetadataRoute.Sitemap = [
+    ...bilingual("", new Date(), "daily", 1.0),
+    ...bilingual("/tools", new Date(), "daily", 0.9),
+    ...bilingual("/categories", new Date(), "weekly", 0.8),
+    ...bilingual("/compare", new Date(), "daily", 0.8),
+    ...bilingual("/tutorials", new Date(), "weekly", 0.7),
+    ...bilingual("/stats", new Date(), "weekly", 0.7),
+    ...bilingual("/blog", new Date(), "daily", 0.6),
+    ...bilingual("/glossary", new Date(), "weekly", 0.5),
+    ...bilingual("/search", new Date(), "weekly", 0.3),
+  ];
+
+  const detailPages = (items: any[], pathPrefix: string, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) =>
+    (items || []).flatMap((item: any) =>
+      bilingual(`/${pathPrefix}/${item.slug}`, new Date(item.updated_at), freq, priority)
     );
 
-  const toolPages = generateLocalePages(tools.data, "tools", "weekly", 0.8);
-  const categoryPages = generateLocalePages(categories.data, "categories", "weekly", 0.7);
-  const tutorialPages = generateLocalePages(tutorials.data, "tutorials", "monthly", 0.6);
-  const statsPages = generateLocalePages(stats.data, "stats", "monthly", 0.6);
-  const comparisonPages = generateLocalePages(comparisons.data, "compare", "weekly", 0.8);
-
-  return [...staticPages, ...toolPages, ...categoryPages, ...tutorialPages, ...statsPages, ...comparisonPages];
+  return [
+    ...staticPages,
+    ...detailPages(tools.data, "tools", "weekly", 0.8),
+    ...detailPages(categories.data, "categories", "weekly", 0.7),
+    ...detailPages(tutorials.data, "tutorials", "monthly", 0.6),
+    ...detailPages(stats.data, "stats", "monthly", 0.6),
+    ...detailPages(comparisons.data, "compare", "weekly", 0.8),
+  ];
 }

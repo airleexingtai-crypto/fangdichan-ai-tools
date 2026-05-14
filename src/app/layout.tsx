@@ -20,19 +20,47 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Best AI Tools for Real Estate — Find, Compare & Choose",
+    default: "AI Tools for Real Estate — Find, Compare & Choose the Best AI Tools",
     template: "%s | AI Tools for Real Estate",
   },
   description:
-    "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, and side-by-side comparisons to help you choose the right tool.",
+    "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, side-by-side comparisons, tutorials, and industry statistics — all in one place.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate"),
+  authors: [{ name: "AI Tools for Real Estate" }],
+  creator: "AI Tools for Real Estate",
+  publisher: "AI Tools for Real Estate",
+  keywords: ["AI tools", "real estate", "property technology", "proptech", "AI software", "real estate AI", "property valuation", "AI CRM", "real estate marketing"],
   openGraph: {
     type: "website",
     locale: "en_US",
     siteName: "AI Tools for Real Estate",
+    title: "AI Tools for Real Estate — Find, Compare & Choose the Best AI Tools",
+    description: "Discover and compare the best AI tools for real estate professionals.",
   },
-  twitter: { card: "summary_large_image" },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Tools for Real Estate",
+    description: "Discover and compare the best AI tools for real estate professionals.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  verification: {
+    // Placeholders — add real values when available
+    // google: "your-google-site-verification",
+  },
+  category: "Technology",
 };
 
 export default async function RootLayout({

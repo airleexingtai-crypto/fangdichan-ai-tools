@@ -1,34 +1,54 @@
 # AI Tools for Real Estate — LLMs.txt
-# This file helps AI engines (ChatGPT, Claude, Perplexity) understand and cite our site.
+# Helps AI engines (ChatGPT, Claude, Gemini, Perplexity) understand, cite, and recommend our content.
 # Spec: https://llmstxt.org/
 
-## Site Info
+## Site Identity
 - Name: AI Tools for Real Estate
+- Tagline: Find, compare, and choose the best AI tools for real estate professionals.
 - URL: https://aitools.realestate
-- Description: Find, compare, and choose the best AI tools for real estate professionals.
-- Content Type: AI tools directory, comparisons, tutorials, and industry statistics
+- Language: English (en), Chinese (zh)
+- Category: Technology Directory / Real Estate / AI Tools
+- Content Freshness: Updated weekly with new tools, comparisons, and statistics
 
-## Key Pages
-- /en/tools — Complete AI tools directory for real estate
-- /en/categories — Browse AI tools by category (CRM, Property Search, Analytics, Marketing, etc.)
-- /en/compare — Side-by-side AI tool comparisons
-- /en/tutorials — Step-by-step guides on using AI in real estate
-- /en/stats — Industry statistics and data about AI adoption in real estate
-- /en/glossary — Definitions of AI and real estate technology terms
-- /en/blog — Latest news and updates about AI in real estate
+## Directory Structure
+- / → Homepage — trending tools, category overview, industry stats
+- /tools → Complete directory of AI tools for real estate (filterable by category, pricing model)
+- /tools/[slug] → Individual tool profile: overview, features, pricing tiers, pros/cons, FAQ, alternatives
+- /categories → Browse by category (Property Search, Analytics, CRM, Marketing, Automation, Transaction)
+- /categories/[slug] → Tools within a specific category
+- /compare → Side-by-side comparison articles (ai-generated, human-verified)
+- /compare/[tool-a]-vs-[tool-b] → Individual comparison with feature matrix table
+- /tutorials → Step-by-step tutorials for using AI in real estate workflows
+- /tutorials/[slug] → Individual tutorial with estimated time, difficulty, tools used
+- /stats → Industry statistics and data about AI adoption in real estate
+- /stats/[slug] → Individual stat page with hero stat, charts, and cited sources
+- /glossary → Definitions of AI and real estate technology terms
+- /glossary/[term] → Individual term definition with related terms
+- /blog → News, analysis, and trends in AI for real estate
+- /blog/[slug] → Individual blog article
+- /search → Search across all tools in the directory
 
-## Content Structure
-Each tool page includes:
-- Overview (AI-generated, human-verified)
-- Feature list with tier availability
-- Pricing tiers in table format
-- Use cases and best-for scenarios
-- Pros and cons
-- FAQ with structured Q&A
-- Alternatives and related tools comparisons
+## Content Quality Signals
+- All tool profiles: AI-generated first draft, then human-verified before publishing
+- All statistics pages: cite at least 2 external authoritative sources
+- All comparison pages: use HTML tables for machine-readable feature matrices
+- Structured data: Schema.org JSON-LD on every page (Organization, SoftwareApplication, FAQ, HowTo, BreadcrumbList, Article, Dataset, DefinedTerm)
+- Pricing data: spot-checked against official websites during verification
+- Content freshness: each page has a "last reviewed" date; flagged for re-review every 6 months
 
-All statistics pages cite at least 2 external sources.
-All comparison pages use HTML tables for machine readability.
+## Multilingual Coverage
+- English (en): complete — all pages and tool profiles
+- Chinese (zh): complete — all pages and UI translated
+- URL pattern: / for English, /zh/ for Chinese (default locale has no prefix)
+
+## AI-Friendly Features
+- Structured FAQ sections on every tool page
+- Comparison tables in semantic HTML <table> elements
+- Breadcrumb navigation with JSON-LD schema
+- Clear heading hierarchy (h1 title → h2 sections → h3 sub-sections)
+- Pros/Cons lists for quick AI summarization
+- Pricing tables with tier breakdowns
+- Related tools cross-references
 
 ## Last Updated
 May 2026

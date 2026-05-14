@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
-import { generateOrganizationSchema } from "@/lib/seo/schema";
+import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo/schema";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/ToolCard";
 import { ArrowRight, BarChart3, Search, Zap } from "lucide-react";
@@ -59,10 +59,8 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema(`${process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate"}/${locale}/search`)) }} />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
