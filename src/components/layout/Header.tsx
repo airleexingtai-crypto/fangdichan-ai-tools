@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/navigation";
+import { Link, usePathname as useIntlPathname } from "@/navigation";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +15,9 @@ const NAV_KEYS = ["tools", "categories", "compare", "tutorials", "stats", "blog"
 
 export function Header() {
   const { theme, toggle } = useTheme();
-  const pathname = usePathname(); // from @/navigation — no locale prefix
+  const rawPathname = usePathname(); // next/navigation — always the real URL path
+  const intlPathname = useIntlPathname(); // @/navigation — path without locale prefix
   const locale = useLocale();
-  const router = useRouter();
   const t = useTranslations("nav");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,14 +25,24 @@ export function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      window.location.href = locale === "en"
+        ? `/search?q=${encodeURIComponent(searchQuery.trim())}`
+        : `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`;
     }
   };
 
-  const switchTo = locale === "en" ? "zh" : "en";
+  // Determine locale from the raw URL (most reliable source of truth)
+  const urlLocale: "en" | "zh" = rawPathname.startsWith("/zh") ? "zh" : "en";
+  const switchTo = urlLocale === "en" ? "zh" : "en";
+
+  // Path without locale prefix (from raw URL)
+  const basePath = urlLocale === "en" ? rawPathname : (rawPathname.replace(/^\/zh/, "") || "/");
+
+  // Build target URL for language switch
+  const targetHref = switchTo === "en" ? basePath : `/${switchTo}${basePath === "/" ? "" : basePath}`;
 
   const handleSwitchLocale = () => {
-    router.replace(pathname, { locale: switchTo });
+    window.location.href = targetHref;
   };
 
   return (
@@ -52,14 +63,13 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-1">
             {NAV_KEYS.map((key) => {
               const href = `/${key}`;
-              const fullHref = locale === "en" ? href : `/${locale}${href}`;
               return (
                 <Link
                   key={key}
                   href={href}
                   className={cn(
                     "no-style px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                    (pathname === href || pathname.startsWith(href + "/"))
+                    (intlPathname === href || intlPathname.startsWith(href + "/"))
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/5",
                   )}
@@ -127,7 +137,7 @@ export function Header() {
                         href={href}
                         className={cn(
                           "no-style px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                          (pathname === href || pathname.startsWith(href + "/"))
+                          (intlPathname === href || intlPathname.startsWith(href + "/"))
                             ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:text-foreground",
                         )}
