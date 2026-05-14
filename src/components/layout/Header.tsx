@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,13 +24,14 @@ const navLinks = [
 export function Header() {
   const { theme, toggle } = useTheme();
   const pathname = usePathname();
+  const locale = useLocale();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/en/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      window.location.href = `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`;
     }
   };
 
@@ -38,7 +40,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 no-style shrink-0">
+          <Link href={`/${locale}`} className="flex items-center gap-2 no-style shrink-0">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">AI</span>
             </div>
@@ -52,10 +54,10 @@ export function Header() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={`/en${link.href}`}
+                href={`/${locale}${link.href}`}
                 className={cn(
                   "no-style px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                  pathname.startsWith(`/en${link.href}`)
+                  pathname.startsWith(`/${locale}${link.href}`)
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/5"
                 )}
@@ -113,10 +115,10 @@ export function Header() {
                   {navLinks.map((link) => (
                     <Link
                       key={link.href}
-                      href={`/en${link.href}`}
+                      href={`/${locale}${link.href}`}
                       className={cn(
                         "no-style px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                        pathname.startsWith(`/en${link.href}`)
+                        pathname.startsWith(`/${locale}${link.href}`)
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:text-foreground"
                       )}

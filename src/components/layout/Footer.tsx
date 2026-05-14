@@ -1,32 +1,30 @@
-import Link from "next/link";
+"use client";
 
-const footerLinks = {
-  About: [
-    { href: "/en/about", label: "About Us" },
-    { href: "/en/advertise", label: "Advertise" },
-    { href: "/en/contact", label: "Contact" },
-    { href: "/en/updates", label: "Changelog" },
-  ],
-  Resources: [
-    { href: "/en/tools", label: "All Tools" },
-    { href: "/en/categories", label: "Categories" },
-    { href: "/en/tutorials", label: "Tutorials" },
-    { href: "/en/glossary", label: "Glossary" },
-  ],
-  Categories: [
-    { href: "/en/categories/crm", label: "AI CRM" },
-    { href: "/en/categories/search", label: "AI Property Search" },
-    { href: "/en/categories/analytics", label: "AI Analytics" },
-    { href: "/en/categories/marketing", label: "AI Marketing" },
-  ],
-  Legal: [
-    { href: "/en/privacy", label: "Privacy Policy" },
-    { href: "/en/terms", label: "Terms of Service" },
-    { href: "/en/disclosure", label: "Affiliate Disclosure" },
-  ],
-};
+import Link from "next/link";
+import { useLocale } from "next-intl";
 
 export function Footer() {
+  const locale = useLocale();
+
+  const footerLinks: Record<string, { href: string; label: string }[]> = {
+    Resources: [
+      { href: `/${locale}/tools`, label: "All Tools" },
+      { href: `/${locale}/categories`, label: "Categories" },
+      { href: `/${locale}/tutorials`, label: "Tutorials" },
+      { href: `/${locale}/glossary`, label: "Glossary" },
+    ],
+    Categories: [
+      { href: `/${locale}/categories/crm`, label: "AI CRM" },
+      { href: `/${locale}/categories/search`, label: "AI Property Search" },
+      { href: `/${locale}/categories/analytics`, label: "AI Analytics" },
+      { href: `/${locale}/categories/marketing`, label: "AI Marketing" },
+    ],
+    Legal: [
+      { href: `/${locale}/privacy`, label: "Privacy Policy" },
+      { href: `/${locale}/terms`, label: "Terms of Service" },
+      { href: `/${locale}/disclosure`, label: "Affiliate Disclosure" },
+    ],
+  };
   return (
     <footer className="border-t border-border bg-card/50 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

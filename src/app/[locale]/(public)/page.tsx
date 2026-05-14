@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/lib/seo/schema";
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,18 @@ import { ToolCard } from "@/components/ToolCard";
 import { ArrowRight, BarChart3, Search, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-export const metadata = generatePageMeta({
-  title: "Best AI Tools for Real Estate — Find, Compare & Choose",
-  description:
-    "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, and side-by-side comparisons.",
-  path: "/en",
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMeta({
+    title: locale === "zh"
+      ? "最佳 AI 工具导航 — 房地产专业版 | 发现·对比·选择"
+      : "Best AI Tools for Real Estate — Find, Compare & Choose",
+    description: locale === "zh"
+      ? "为房地产专业人士发现、对比和选择最佳 AI 工具。价格、功能、评价和全面对比，一站搞定。"
+      : "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, and side-by-side comparisons.",
+    path: `/${locale}`,
+  });
+}
 
 const categories = [
   { icon: "🏠", name: "Property Search", slug: "property-search", count: 12 },
@@ -28,7 +35,9 @@ const stats = [
   { value: "3.2x", label: "productivity boost with AI" },
 ];
 
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
   // Fetch trending tools
   const { data: trendingTools } = await supabase
     .from("Tool")
@@ -61,13 +70,13 @@ export default async function HomePage() {
             pricing — all in one place.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/en/tools" className="no-style">
+            <Link href={`/${locale}/tools`} className="no-style">
               <Button size="lg" className="text-base">
                 <Search className="mr-2 h-4 w-4" />
                 Browse All Tools
               </Button>
             </Link>
-            <Link href="/en/compare" className="no-style">
+            <Link href={`/${locale}/compare`} className="no-style">
               <Button variant="outline" size="lg" className="text-base">
                 <BarChart3 className="mr-2 h-4 w-4" />
                 View Comparisons
@@ -96,7 +105,7 @@ export default async function HomePage() {
               Find the right AI tools for your specific needs
             </p>
           </div>
-          <Link href="/en/categories" className="no-style">
+          <Link href={`/${locale}/categories`} className="no-style">
             <Button variant="ghost" size="sm">
               View all <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -107,7 +116,7 @@ export default async function HomePage() {
           {categories.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/en/categories/${cat.slug}`}
+              href={`/${locale}/categories/${cat.slug}`}
               className="no-style group"
             >
               <div className="card-hover rounded-lg border border-border/50 bg-card p-4 text-center h-full">
@@ -133,7 +142,7 @@ export default async function HomePage() {
               Most popular tools this month
             </p>
           </div>
-          <Link href="/en/tools" className="no-style">
+          <Link href={`/${locale}/tools`} className="no-style">
             <Button variant="ghost" size="sm">
               View all tools <ArrowRight className="ml-1 h-4 w-4" />
             </Button>

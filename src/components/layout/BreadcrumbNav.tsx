@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,12 +21,14 @@ type Props = {
 };
 
 export function BreadcrumbNav({ items, className }: Props) {
+  const locale = useLocale();
+
   const ldJson = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, i) => ({
       "@type": "ListItem",
-      position: i + 2, // +1 for home
+      position: i + 2,
       name: item.label,
       item: `${process.env.NEXT_PUBLIC_SITE_URL}${item.href}`,
     })),
@@ -38,7 +43,7 @@ export function BreadcrumbNav({ items, className }: Props) {
       <Breadcrumb className={className}>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <Link href="/en" className="no-style text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href={`/${locale}`} className="no-style text-sm text-muted-foreground hover:text-foreground transition-colors">
               Home
             </Link>
           </BreadcrumbItem>
