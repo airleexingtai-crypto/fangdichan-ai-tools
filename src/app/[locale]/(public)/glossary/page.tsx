@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,8 +9,9 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   return generatePageMeta({
-    title: "AI & Real Estate Glossary — Key Terms Defined",
+    title: t("glossary_title"),
     description: "A glossary of AI and real estate technology terms.",
     path: locale === "en" ? "/glossary" : `/${locale}/glossary`,
   });
@@ -23,12 +25,13 @@ const glossaryTerms = [
 
 export default async function GlossaryPage({ params }: Props) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "Glossary", href: "/glossary" }]} />
-      <h1 className="text-3xl font-bold mt-4 mb-6">AI & Real Estate Glossary</h1>
+      <BreadcrumbNav items={[{ label: t("breadcrumb_glossary"), href: "/glossary" }]} />
+      <h1 className="text-3xl font-bold mt-4 mb-6">{t("glossary_title")}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {glossaryTerms.map((g) => (
           <Link key={g.slug} href={lhref(`/glossary/${g.slug}`)} className="no-style">

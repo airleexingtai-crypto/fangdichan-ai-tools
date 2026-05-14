@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
@@ -8,8 +9,9 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   return generatePageMeta({
-    title: "AI Tool Categories for Real Estate — Browse by Category",
+    title: t("categories_title"),
     description: "Browse AI tools for real estate by category. CRM, Property Search, Analytics, Marketing, and more.",
     path: locale === "en" ? "/categories" : `/${locale}/categories`,
   });
@@ -17,13 +19,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CategoriesPage({ params }: Props) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: categories } = await supabase.from("Category").select("*").order("sort_order");
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "Categories", href: "/categories" }]} />
-      <h1 className="text-3xl font-bold mt-4 mb-6">AI Tool Categories</h1>
+      <BreadcrumbNav items={[{ label: t("breadcrumb_categories"), href: "/categories" }]} />
+      <h1 className="text-3xl font-bold mt-4 mb-6">{t("categories_title")}</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {categories?.map((cat: any) => (
           <Link key={cat.slug} href={lhref(`/categories/${cat.slug}`)} className="no-style">

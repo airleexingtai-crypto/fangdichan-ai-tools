@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
@@ -9,10 +10,11 @@ type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ q?: 
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const { q } = await searchParams;
   const base = locale === "en" ? "/search" : `/${locale}/search`;
   return generatePageMeta({
-    title: q ? `Search: ${q} — AI Tools for Real Estate` : "Search AI Tools",
+    title: q ? t("search_results").replace("{query}", q) : t("search_title"),
     description: q ? `Search results for "${q}" in our AI tools directory.` : "Search our directory of AI tools for real estate professionals.",
     path: `${base}${q ? `?q=${encodeURIComponent(q)}` : ""}`,
   });
@@ -20,6 +22,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 
 export default async function SearchPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { q } = await searchParams;
   const query = q?.trim() || "";
@@ -37,15 +40,15 @@ export default async function SearchPage({ params, searchParams }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "Search", href: "/search" }]} />
+      <BreadcrumbNav items={[{ label: t("breadcrumb_search"), href: "/search" }]} />
 
       <h1 className="text-3xl font-bold mb-2">
-        {query ? `Results for "${query}"` : "Search AI Tools"}
+        {query ? t("search_results").replace("{query}", query) : t("search_title")}
       </h1>
       <p className="text-muted-foreground mb-8">
         {query
-          ? `Found ${results.length} tool${results.length !== 1 ? "s" : ""}`
-          : "Enter a search term to find AI tools"}
+          ? t("search_found").replace("{count}", String(results.length)).replace("{plural}", results.length !== 1 ? "s" : "")
+          : t("search_empty_prompt")}
       </p>
 
       {results.length > 0 ? (
@@ -65,10 +68,10 @@ export default async function SearchPage({ params, searchParams }: Props) {
         </div>
       ) : query ? (
         <div className="text-center py-16">
-          <p className="text-lg text-muted-foreground mb-4">No tools found matching &ldquo;{query}&rdquo;</p>
+          <p className="text-lg text-muted-foreground mb-4">{t("search_no_results").replace("{query}", query)}</p>
           <p className="text-sm text-muted-foreground">
-            Try a different search term or{" "}
-            <Link href={lhref("/tools")} className="text-primary">browse all tools</Link>.
+            {t("search_suggest")}{" "}
+            <Link href={lhref("/tools")} className="text-primary">{t("search_browse")}</Link>.
           </p>
         </div>
       ) : null}

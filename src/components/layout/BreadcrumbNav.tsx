@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/navigation";
+import { useTranslations } from "next-intl";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export function BreadcrumbNav({ items, className }: Props) {
+  const pt = useTranslations("pages");
   const ldJson = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -41,7 +43,7 @@ export function BreadcrumbNav({ items, className }: Props) {
         <BreadcrumbList>
           <BreadcrumbItem>
             <Link href="/" className="no-style text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Home
+              {pt("breadcrumb_home")}
             </Link>
           </BreadcrumbItem>
           {items.map((item, i) => (

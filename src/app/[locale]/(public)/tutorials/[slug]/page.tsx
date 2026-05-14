@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateHowToSchema } from "@/lib/seo/schema";
 import { supabase } from "@/lib/supabase";
@@ -24,7 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TutorialPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: tutorial } = await supabase
     .from("Tutorial")
     .select("*, tools(TutorialTool(tool:Tool(*)))")
@@ -57,7 +60,7 @@ export default async function TutorialPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Tutorials", href: "/tutorials" },
+            { label: t("breadcrumb_tutorials"), href: "/tutorials" },
             { label: tutorial.title, href: `/tutorials/${slug}` },
           ]}
         />

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateDatasetSchema } from "@/lib/seo/schema";
 import { supabase } from "@/lib/supabase";
@@ -21,7 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StatsPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: stat } = await supabase
     .from("StatPage")
     .select("*, sources(*)")
@@ -52,7 +55,7 @@ export default async function StatsPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Statistics", href: "/stats" },
+            { label: t("breadcrumb_stats"), href: "/stats" },
             { label: stat.title, href: `/stats/${slug}` },
           ]}
         />

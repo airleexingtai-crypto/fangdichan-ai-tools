@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
@@ -8,23 +9,25 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   return generatePageMeta({
-    title: "AI Tool Comparisons for Real Estate — Side-by-Side Reviews",
-    description: "Compare AI tools for real estate side by side.",
+    title: t("compare_title"),
+    description: t("compare_desc"),
     path: locale === "en" ? "/compare" : `/${locale}/compare`,
   });
 }
 
 export default async function ComparePage({ params }: Props) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: comparisons } = await supabase.from("Comparison").select("*").eq("status", "PUBLISHED").order("created_at", { ascending: false });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "Compare", href: "/compare" }]} />
-      <h1 className="text-3xl font-bold mt-4 mb-2">AI Tool Comparisons</h1>
-      <p className="text-muted-foreground mb-8">Side-by-side comparisons to help you choose</p>
+      <BreadcrumbNav items={[{ label: t("breadcrumb_compare"), href: "/compare" }]} />
+      <h1 className="text-3xl font-bold mt-4 mb-2">{t("compare_title")}</h1>
+      <p className="text-muted-foreground mb-8">{t("compare_desc")}</p>
       {comparisons && comparisons.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {comparisons.map((c: any) => (
@@ -38,7 +41,7 @@ export default async function ComparePage({ params }: Props) {
         </div>
       ) : (
         <div className="text-center py-16 text-muted-foreground">
-          <p>No comparisons yet.</p>
+          <p>{t("compare_empty")}</p>
         </div>
       )}
     </div>

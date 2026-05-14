@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateSoftwareApplicationSchema, generateFAQSchema } from "@/lib/seo/schema";
 import { supabase } from "@/lib/supabase";
@@ -11,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { AffiliateCTA } from "@/components/AffiliateCTA";
 import { ToolCard } from "@/components/ToolCard";
-import { Star, Globe, Calendar, Wrench, CheckCircle2, XCircle } from "lucide-react";
+import { Star, Globe, CheckCircle2, XCircle } from "lucide-react";
 
 type Props = { params: Promise<{ slug: string; locale: string }> };
 
@@ -104,6 +105,8 @@ function renderUseCases(useCases: any) {
 
 export default async function ToolPage({ params }: Props) {
   const { slug, locale } = await params;
+  const toolT = await getTranslations({ locale, namespace: "tool" });
+  const pgT = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   const { data: tool } = await supabase
@@ -160,7 +163,7 @@ export default async function ToolPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "AI Tools", href: "/tools" },
+            { label: pgT("breadcrumb_tools"), href: "/tools" },
             ...(category ? [{ label: category.name, href: `/categories/${category.slug}` }] : []),
             { label: tool.name, href: `/tools/${tool.slug}` },
           ]}
@@ -185,7 +188,7 @@ export default async function ToolPage({ params }: Props) {
                   {tool.avg_rating && (
                     <span className="flex items-center gap-1 text-sm">
                       <Star className="h-4 w-4 fill-accent-warm text-accent-warm" />
-                      {Number(tool.avg_rating).toFixed(1)} ({tool.review_count} reviews)
+                      {Number(tool.avg_rating).toFixed(1)} {pgT("reviews").replace("{count}", String(tool.review_count))}
                     </span>
                   )}
                   <Badge variant="secondary">{PRICING_LABEL[tool.pricing_model] || tool.pricing_model}</Badge>
@@ -195,7 +198,7 @@ export default async function ToolPage({ params }: Props) {
 
             {/* Overview */}
             <section>
-              <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "概览" : "Overview"}</h2>
+              <h2 className="text-xl font-semibold mb-3">{toolT("overview")}</h2>
               <p className="text-base leading-relaxed text-muted-foreground">{tool.description}</p>
               {tool.long_description && (
                 <div className="mt-4 prose prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: tool.long_description }} />
@@ -205,7 +208,7 @@ export default async function ToolPage({ params }: Props) {
             {/* Features */}
             {features && (
               <section>
-                <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "功能特性" : "Features"}</h2>
+                <h2 className="text-xl font-semibold mb-3">{toolT("features")}</h2>
                 {renderFeatures(features)}
               </section>
             )}
@@ -213,7 +216,7 @@ export default async function ToolPage({ params }: Props) {
             {/* Pricing */}
             {pricingTiers && (
               <section>
-                <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "价格方案" : "Pricing"}</h2>
+                <h2 className="text-xl font-semibold mb-3">{toolT("pricing")}</h2>
                 {renderPricing(pricingTiers)}
               </section>
             )}
@@ -221,14 +224,14 @@ export default async function ToolPage({ params }: Props) {
             {/* Use Cases */}
             {useCases && (
               <section>
-                <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "使用场景" : "Use Cases"}</h2>
+                <h2 className="text-xl font-semibold mb-3">{toolT("use_cases")}</h2>
                 {renderUseCases(useCases)}
               </section>
             )}
 
             {/* Pros & Cons */}
             <section>
-              <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "优缺点" : "Pros & Cons"}</h2>
+              <h2 className="text-xl font-semibold mb-3">{toolT("pros_cons")}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="border-accent-success/20">
                   <CardContent className="p-4">
@@ -265,7 +268,7 @@ export default async function ToolPage({ params }: Props) {
 
             {/* FAQ */}
             <section>
-              <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "常见问题" : "FAQ"}</h2>
+              <h2 className="text-xl font-semibold mb-3">{toolT("faq")}</h2>
               <div className="space-y-3">
                 {faqs.map((faq, i) => (
                   <Card key={i}>
@@ -281,7 +284,7 @@ export default async function ToolPage({ params }: Props) {
             {/* Alternatives */}
             {alternatives && alternatives.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold mb-3">{locale === "zh" ? "替代工具" : "Alternatives"}</h2>
+                <h2 className="text-xl font-semibold mb-3">{toolT("alternatives")}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {alternatives.map((alt: any) => (
                     <ToolCard
@@ -305,26 +308,26 @@ export default async function ToolPage({ params }: Props) {
             <Card className="sticky top-24">
               <CardContent className="p-5 space-y-4">
                 <h3 className="font-semibold">
-                  {locale === "zh" ? "快速概览" : "Quick Summary"}
+                  {toolT("quick_summary")}
                 </h3>
                 <dl className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-muted-foreground">{locale === "zh" ? "定价模式" : "Pricing"}</dt>
+                    <dt className="text-muted-foreground">{pgT("pricing_label")}</dt>
                     <dd className="font-medium">{PRICING_LABEL[tool.pricing_model] || tool.pricing_model}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-muted-foreground">API</dt>
-                    <dd className="font-medium">{tool.api_available ? "Available" : "N/A"}</dd>
+                    <dt className="text-muted-foreground">{pgT("api_label")}</dt>
+                    <dd className="font-medium">{tool.api_available ? (locale === "zh" ? "可用" : "Available") : "N/A"}</dd>
                   </div>
                   {tool.founded_year && (
                     <div className="flex justify-between">
-                      <dt className="text-muted-foreground">{locale === "zh" ? "成立年份" : "Founded"}</dt>
+                      <dt className="text-muted-foreground">{pgT("founded_label")}</dt>
                       <dd className="font-medium">{tool.founded_year}</dd>
                     </div>
                   )}
                   {category && (
                     <div className="flex justify-between">
-                      <dt className="text-muted-foreground">{locale === "zh" ? "分类" : "Category"}</dt>
+                      <dt className="text-muted-foreground">{pgT("category_label")}</dt>
                       <dd className="font-medium">
                         <Link href={lhref(`/categories/${category.slug}`)} className="no-style text-primary hover:text-accent-secondary">
                           {category.name}
@@ -347,7 +350,7 @@ export default async function ToolPage({ params }: Props) {
                 <a href={tool.website_url} target="_blank" rel="nofollow" className="no-style">
                   <Button variant="outline" className="w-full" size="sm">
                     <Globe className="mr-2 h-4 w-4" />
-                    {locale === "zh" ? "访问官网" : "Visit Website"}
+                    {toolT("visit_site")}
                   </Button>
                 </a>
               </CardContent>

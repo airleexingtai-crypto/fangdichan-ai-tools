@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateDefinedTermSchema } from "@/lib/seo/schema";
 import { notFound } from "next/navigation";
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function GlossaryPage({ params }: Props) {
   const { term: termSlug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   const definition = glossaryTerms[termSlug] || null;
@@ -39,7 +41,7 @@ export default async function GlossaryPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Glossary", href: "/glossary" },
+            { label: t("breadcrumb_glossary"), href: "/glossary" },
             { label: definition.term, href: `/glossary/${termSlug}` },
           ]}
         />
@@ -50,7 +52,7 @@ export default async function GlossaryPage({ params }: Props) {
 
           <Card className="mb-8">
             <CardContent className="p-6">
-              <h2 className="font-semibold text-sm text-muted-foreground mb-2">Definition</h2>
+              <h2 className="font-semibold text-sm text-muted-foreground mb-2">{t("glossary_definition")}</h2>
               <p className="text-lg leading-relaxed">{definition.definition}</p>
               {definition.longDefinition && (
                 <div className="mt-4 pt-4 border-t border-border">
@@ -62,7 +64,7 @@ export default async function GlossaryPage({ params }: Props) {
 
           {definition.relatedTerms && definition.relatedTerms.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold mb-3">Related Terms</h2>
+              <h2 className="text-xl font-semibold mb-3">{t("glossary_related")}</h2>
               <div className="flex flex-wrap gap-2">
                 {definition.relatedTerms.map((rt: string) => (
                   <Link key={rt} href={lhref(`/glossary/${rt.toLowerCase().replace(/\s+/g, "-")}`)} className="no-style">

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
@@ -15,13 +16,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const names = slugs.split("-vs-").map((s: string) => s.replace(/-/g, " "));
   return generatePageMeta({
     title: `${names.join(" vs ")} — Which AI Tool Wins?`,
-    description: `Side-by-side comparison of ${names.join(" and ")}. Compare pricing, features, pros & cons, and find the best AI tool for your real estate needs.`,
+    description: `Side-by-side comparison of ${names.join(" and ")}. Compare pricing, features, pros & cons.`,
     path: locale === "en" ? `/compare/${slugs}` : `/${locale}/compare/${slugs}`,
   });
 }
 
 export default async function ComparisonPage({ params }: Props) {
-  const { slugs } = await params;
+  const { slugs, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages" });
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const toolSlugs = slugs.split("-vs-");
 
   if (toolSlugs.length < 2 || toolSlugs.length > 5) notFound();
@@ -66,7 +69,7 @@ export default async function ComparisonPage({ params }: Props) {
       <BreadcrumbNav
         className="mb-6"
         items={[
-          { label: "Compare", href: "/compare" },
+          { label: t("breadcrumb_compare"), href: "/compare" },
           { label: `${tools[0].name} vs ${tools[1].name}`, href: `/compare/${slugs}` },
         ]}
       />
