@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { Link } from "@/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Minus } from "lucide-react";
@@ -23,8 +23,6 @@ type Props = {
 };
 
 export function ComparisonTable({ data, className }: Props) {
-  const locale = useLocale();
-
   return (
     <div className={cn("overflow-x-auto rounded-lg border border-border", className)}>
       <Table>
@@ -40,12 +38,12 @@ export function ComparisonTable({ data, className }: Props) {
                 )}
               >
                 <div className="flex flex-col items-center gap-1">
-                  <a
-                    href={`/${locale}/tools/${tool.slug}`}
+                  <Link
+                    href={`/tools/${tool.slug}`}
                     className="no-style font-semibold hover:text-primary transition-colors"
                   >
                     {tool.name}
-                  </a>
+                  </Link>
                   {tool.winner && (
                     <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
                       Our Pick

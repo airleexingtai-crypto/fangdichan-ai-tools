@@ -85,7 +85,7 @@ export default async function ToolsPage({ params, searchParams }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "All Tools", href: lhref("/tools") }]} />
+      <BreadcrumbNav items={[{ label: "All Tools", href: "/tools" }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4 mb-6">

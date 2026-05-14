@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? `${tool.name} — AI 工具详情 | 功能、价格与评价`
       : `${tool.name} — AI Tool for Real Estate | Pricing, Features & Reviews`,
     description: tool.description?.slice(0, 160) || `${tool.name}: ${tool.tagline}`,
-    path: `/${locale}/tools/${slug}`,
+    path: locale === "en" ? `/tools/${slug}` : `/${locale}/tools/${slug}`,
     updatedAt: tool.updated_at,
   });
 }
@@ -104,6 +104,7 @@ function renderUseCases(useCases: any) {
 
 export default async function ToolPage({ params }: Props) {
   const { slug, locale } = await params;
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   const { data: tool } = await supabase
     .from("Tool")
@@ -159,9 +160,9 @@ export default async function ToolPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "AI Tools", href: `/${locale}/tools` },
-            ...(category ? [{ label: category.name, href: `/${locale}/categories/${category.slug}` }] : []),
-            { label: tool.name, href: `/${locale}/tools/${tool.slug}` },
+            { label: "AI Tools", href: "/tools" },
+            ...(category ? [{ label: category.name, href: `/categories/${category.slug}` }] : []),
+            { label: tool.name, href: `/tools/${tool.slug}` },
           ]}
         />
 
@@ -292,7 +293,6 @@ export default async function ToolPage({ params }: Props) {
                       pricingModel={alt.pricing_model}
                       avgRating={alt.avg_rating}
                       reviewCount={alt.review_count}
-                      locale={locale}
                     />
                   ))}
                 </div>
@@ -326,7 +326,7 @@ export default async function ToolPage({ params }: Props) {
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">{locale === "zh" ? "分类" : "Category"}</dt>
                       <dd className="font-medium">
-                        <Link href={`/${locale}/categories/${category.slug}`} className="no-style text-primary hover:text-accent-secondary">
+                        <Link href={lhref(`/categories/${category.slug}`)} className="no-style text-primary hover:text-accent-secondary">
                           {category.name}
                         </Link>
                       </dd>
