@@ -1,7 +1,12 @@
-export default {
+import { defineConfig, env } from "prisma/config";
+
+export default defineConfig({
   datasource: {
-    db: {
-      url: process.env.DATABASE_URL!,
-    },
+    url: env("DATABASE_URL"),
   },
-};
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+    seed: "npx tsx prisma/seed.ts",
+  },
+});
