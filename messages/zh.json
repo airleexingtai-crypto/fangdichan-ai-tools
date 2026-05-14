@@ -101,5 +101,23 @@
     "about": "关于我们",
     "advertise": "广告合作",
     "contact": "联系我们"
+  },
+  "footer": {
+    "resources": "资源",
+    "all_tools": "全部工具",
+    "categories": "分类",
+    "tutorials": "教程",
+    "glossary": "术语表",
+    "top_categories": "热门分类",
+    "ai_crm": "AI 客户管理",
+    "ai_property_search": "AI 房产搜索",
+    "ai_analytics": "AI 数据分析",
+    "ai_marketing": "AI 营销推广",
+    "legal": "法律信息",
+    "privacy_policy": "隐私政策",
+    "terms": "服务条款",
+    "disclosure": "联盟营销披露",
+    "copyright": "AI工具导航",
+    "disclaimer": "通过本站链接购买可能会为我们带来佣金收入，但这不影响我们的排名、评价和推荐。"
   }
 }

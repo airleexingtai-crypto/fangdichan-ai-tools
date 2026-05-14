@@ -101,5 +101,23 @@
     "about": "About",
     "advertise": "Advertise",
     "contact": "Contact"
+  },
+  "footer": {
+    "resources": "Resources",
+    "all_tools": "All Tools",
+    "categories": "Categories",
+    "tutorials": "Tutorials",
+    "glossary": "Glossary",
+    "top_categories": "Top Categories",
+    "ai_crm": "AI CRM",
+    "ai_property_search": "AI Property Search",
+    "ai_analytics": "AI Analytics",
+    "ai_marketing": "AI Marketing",
+    "legal": "Legal",
+    "privacy_policy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "disclosure": "Affiliate Disclosure",
+    "copyright": "AITools.RealEstate",
+    "disclaimer": "We may earn commissions from qualifying purchases made through links on this site. This does not affect our rankings, reviews, or recommendations."
   }
 }

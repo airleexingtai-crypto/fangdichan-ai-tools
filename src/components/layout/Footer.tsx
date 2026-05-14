@@ -1,39 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export function Footer() {
   const locale = useLocale();
+  const t = useTranslations("footer");
 
-  const footerLinks: Record<string, { href: string; label: string }[]> = {
-    Resources: [
-      { href: `/${locale}/tools`, label: "All Tools" },
-      { href: `/${locale}/categories`, label: "Categories" },
-      { href: `/${locale}/tutorials`, label: "Tutorials" },
-      { href: `/${locale}/glossary`, label: "Glossary" },
-    ],
-    Categories: [
-      { href: `/${locale}/categories/crm`, label: "AI CRM" },
-      { href: `/${locale}/categories/search`, label: "AI Property Search" },
-      { href: `/${locale}/categories/analytics`, label: "AI Analytics" },
-      { href: `/${locale}/categories/marketing`, label: "AI Marketing" },
-    ],
-    Legal: [
-      { href: `/${locale}/privacy`, label: "Privacy Policy" },
-      { href: `/${locale}/terms`, label: "Terms of Service" },
-      { href: `/${locale}/disclosure`, label: "Affiliate Disclosure" },
-    ],
-  };
+  // Only add locale prefix for non-default (zh) locale
+  const lhref = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
+
+  const sections = [
+    {
+      title: t("resources"),
+      links: [
+        { href: lhref("/tools"), label: t("all_tools") },
+        { href: lhref("/categories"), label: t("categories") },
+        { href: lhref("/tutorials"), label: t("tutorials") },
+        { href: lhref("/glossary"), label: t("glossary") },
+      ],
+    },
+    {
+      title: t("top_categories"),
+      links: [
+        { href: lhref("/categories/crm"), label: t("ai_crm") },
+        { href: lhref("/categories/search"), label: t("ai_property_search") },
+        { href: lhref("/categories/analytics"), label: t("ai_analytics") },
+        { href: lhref("/categories/marketing"), label: t("ai_marketing") },
+      ],
+    },
+    {
+      title: t("legal"),
+      links: [
+        { href: lhref("/privacy"), label: t("privacy_policy") },
+        { href: lhref("/terms"), label: t("terms") },
+        { href: lhref("/disclosure"), label: t("disclosure") },
+      ],
+    },
+  ];
+
   return (
     <footer className="border-t border-border bg-card/50 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h4 className="font-semibold text-sm mb-4 text-foreground">{title}</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+          {sections.map((section) => (
+            <div key={section.title}>
+              <h4 className="font-semibold text-sm mb-4 text-foreground">{section.title}</h4>
               <ul className="space-y-2">
-                {links.map((link) => (
+                {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
@@ -54,12 +68,11 @@ export function Footer() {
               <span className="text-primary-foreground font-bold text-[10px]">AI</span>
             </div>
             <span className="text-sm text-muted-foreground">
-              AITools.RealEstate &copy; {new Date().getFullYear()}
+              {t("copyright")} &copy; {new Date().getFullYear()}
             </span>
           </div>
           <p className="text-xs text-muted-foreground max-w-md text-center sm:text-right">
-            We may earn commissions from qualifying purchases made through links on this site.
-            This does not affect our rankings, reviews, or recommendations.
+            {t("disclaimer")}
           </p>
         </div>
       </div>

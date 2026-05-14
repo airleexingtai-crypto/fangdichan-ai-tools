@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,31 +11,30 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Sun, Moon, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { href: "/tools", label: "Tools" },
-  { href: "/categories", label: "Categories" },
-  { href: "/compare", label: "Compare" },
-  { href: "/tutorials", label: "Tutorials" },
-  { href: "/stats", label: "Statistics" },
-  { href: "/blog", label: "Blog" },
-  { href: "/glossary", label: "Glossary" },
-];
+const NAV_KEYS = ["tools", "categories", "compare", "tutorials", "stats", "blog", "glossary"] as const;
 
 export function Header() {
   const { theme, toggle } = useTheme();
   const pathname = usePathname();
   const locale = useLocale();
+  const t = useTranslations("nav");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Build a locale-aware href: only add prefix for non-default (zh) locale
+  const lhref = useCallback(
+    (path: string) => (locale === "en" ? path : `/${locale}${path}`),
+    [locale],
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      window.location.href = lhref(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
-  // Language switcher — strip current locale prefix, build target URL
+  // Language switcher
   const switchTo = locale === "en" ? "zh" : "en";
   const basePath = locale === "en" ? pathname : (pathname.replace(new RegExp(`^/${locale}`), "") || "/");
   const targetHref = switchTo === "en" ? basePath : `/${switchTo}${basePath === "/" ? "" : basePath}`;
@@ -45,7 +44,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={`/${locale}`} className="flex items-center gap-2 no-style shrink-0">
+          <Link href={lhref("/")} className="flex items-center gap-2 no-style shrink-0">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">AI</span>
             </div>
@@ -56,30 +55,32 @@ export function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={`/${locale}${link.href}`}
-                className={cn(
-                  "no-style px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                  pathname.startsWith(`/${locale}${link.href}`)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/5"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_KEYS.map((key) => {
+              const href = `/${key}`;
+              return (
+                <Link
+                  key={key}
+                  href={lhref(href)}
+                  className={cn(
+                    "no-style px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                    pathname.startsWith(lhref(href))
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/5",
+                  )}
+                >
+                  {t(key)}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            {/* Search Toggle - Desktop */}
             {searchOpen ? (
               <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-1">
                 <Input
                   type="search"
-                  placeholder="Search AI tools..."
+                  placeholder={t("search")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-48 lg:w-64 h-8 text-sm"
@@ -114,30 +115,32 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-72 pt-12">
                 <div className="flex flex-col gap-1">
-                  {/* Mobile Search */}
                   <form onSubmit={handleSearch} className="mb-4">
                     <Input
                       type="search"
-                      placeholder="Search AI tools..."
+                      placeholder={t("search")}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full"
                     />
                   </form>
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={`/${locale}${link.href}`}
-                      className={cn(
-                        "no-style px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                        pathname.startsWith(`/${locale}${link.href}`)
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {NAV_KEYS.map((key) => {
+                    const href = `/${key}`;
+                    return (
+                      <Link
+                        key={key}
+                        href={lhref(href)}
+                        className={cn(
+                          "no-style px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                          pathname.startsWith(lhref(href))
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {t(key)}
+                      </Link>
+                    );
+                  })}
                   <div className="mt-4 pt-4 border-t border-border">
                     <Link href={targetHref} className="no-style">
                       <Button variant="outline" size="sm" className="w-full text-sm">
