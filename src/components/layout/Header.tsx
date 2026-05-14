@@ -35,6 +35,11 @@ export function Header() {
     }
   };
 
+  // Language switcher
+  const switchTo = locale === "en" ? "zh" : "en";
+  const cleanPath = locale === "en" ? pathname : (pathname.replace(/^\/zh/, "") || "/");
+  const targetHref = switchTo === "en" ? cleanPath : `/${switchTo}${cleanPath}`;
+
   return (
     <header className="sticky top-0 z-50 glass-nav border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,6 +95,13 @@ export function Header() {
               </Button>
             )}
 
+            {/* Language Toggle */}
+            <Link href={targetHref} className="no-style">
+              <Button variant="ghost" size="sm" className="h-9 text-xs font-medium">
+                {switchTo === "zh" ? "中文" : "EN"}
+              </Button>
+            </Link>
+
             {/* Theme Toggle */}
             <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggle}>
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -126,6 +138,13 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <Link href={targetHref} className="no-style">
+                      <Button variant="outline" size="sm" className="w-full text-sm">
+                        {switchTo === "zh" ? "切换到中文" : "Switch to English"}
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
