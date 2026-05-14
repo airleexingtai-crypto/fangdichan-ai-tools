@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: locale === "zh"
       ? "浏览完整的房地产 AI 工具目录。按分类、定价和功能筛选。"
       : "Browse our complete directory of AI tools for real estate professionals. Filter by category, pricing model, and features.",
-    path: `/${locale}/tools`,
+    path: locale === "en" ? "/tools" : `/${locale}/tools`,
   });
 }
 
@@ -45,6 +45,8 @@ export default async function ToolsPage({ params, searchParams }: Props) {
   const pricing = (sp.pricing as string) || "";
   const sortKey = ((sp.sort as string) || "rating") as keyof typeof SORT_OPTIONS;
   const PER_PAGE = 12;
+
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   // Fetch categories for filter sidebar
   const { data: categories } = await supabase.from("Category").select("slug, name, icon").order("name");
@@ -78,12 +80,12 @@ export default async function ToolsPage({ params, searchParams }: Props) {
     if (categorySlug) p.set("category", categorySlug);
     if (pricing) p.set("pricing", pricing);
     Object.entries(overrides).forEach(([k, v]) => { if (v) p.set(k, v); else p.delete(k); });
-    return `/${locale}/tools?${p.toString()}`;
+    return `${lhref("/tools")}?${p.toString()}`;
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "All Tools", href: `/${locale}/tools` }]} />
+      <BreadcrumbNav items={[{ label: "All Tools", href: lhref("/tools") }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4 mb-6">
@@ -203,7 +205,6 @@ export default async function ToolsPage({ params, searchParams }: Props) {
                     pricingModel={tool.pricing_model}
                     avgRating={tool.avg_rating}
                     reviewCount={tool.review_count}
-                    locale={locale}
                   />
                 ))}
               </div>
@@ -248,7 +249,7 @@ export default async function ToolsPage({ params, searchParams }: Props) {
                     ? "尝试调整筛选条件或清除搜索。"
                     : "Try adjusting your filters or clearing the search."}
                 </p>
-                <Link href={`/${locale}/tools`} className="no-style">
+                <Link href={lhref("/tools")} className="no-style">
                   <Button variant="outline" size="sm">
                     {locale === "zh" ? "清除筛选" : "Clear All Filters"}
                   </Button>
