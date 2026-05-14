@@ -35,10 +35,10 @@ export function Header() {
     }
   };
 
-  // Language switcher
+  // Language switcher — strip current locale prefix, build target URL
   const switchTo = locale === "en" ? "zh" : "en";
-  const cleanPath = locale === "en" ? pathname : (pathname.replace(/^\/zh/, "") || "/");
-  const targetHref = switchTo === "en" ? cleanPath : `/${switchTo}${cleanPath}`;
+  const basePath = locale === "en" ? pathname : (pathname.replace(new RegExp(`^/${locale}`), "") || "/");
+  const targetHref = switchTo === "en" ? basePath : `/${switchTo}${basePath === "/" ? "" : basePath}`;
 
   return (
     <header className="sticky top-0 z-50 glass-nav border-b border-border">

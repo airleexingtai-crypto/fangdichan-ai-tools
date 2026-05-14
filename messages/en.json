@@ -16,13 +16,22 @@
     "theme": "Toggle theme"
   },
   "home": {
-    "hero_title": "The AI Tool Directory for Real Estate Professionals",
-    "hero_subtitle": "Discover, compare, and choose the best AI tools for real estate. Structured comparisons, honest reviews, and up-to-date pricing — all in one place.",
-    "browse_tools": "Browse Tools",
+    "hero_title": "The AI Tool Directory",
+    "hero_highlight": "for Real Estate",
+    "hero_subtitle": "Discover, compare, and choose the best AI tools for real estate professionals. Structured comparisons, honest reviews, and up-to-date pricing — all in one place.",
+    "browse_tools": "Browse All Tools",
     "view_comparisons": "View Comparisons",
-    "popular_categories": "Popular Categories",
-    "trending_tools": "Trending Tools",
-    "latest_stats": "Latest Statistics"
+    "explore_categories": "Explore by Category",
+    "find_tools_desc": "Find the right AI tools for your specific needs",
+    "view_all": "View all",
+    "trending_tools": "Trending AI Tools",
+    "trending_desc": "Most popular tools this month",
+    "view_all_tools": "View all tools",
+    "cta_title": "Stay Updated on AI Tools for Real Estate",
+    "cta_desc": "Get weekly updates on new AI tools, comparisons, and industry statistics delivered to your inbox.",
+    "cta_placeholder": "Enter your email",
+    "cta_button": "Subscribe",
+    "cta_disclaimer": "No spam. Unsubscribe anytime."
   },
   "tool": {
     "visit_site": "Visit Site",

@@ -16,13 +16,22 @@
     "theme": "切换主题"
   },
   "home": {
-    "hero_title": "房地产 AI 工具导航平台",
+    "hero_title": "AI 工具导航平台",
+    "hero_highlight": "房地产专业版",
     "hero_subtitle": "发现、对比和选择最适合房地产行业的 AI 工具。结构化对比、真实评价、最新价格 — 一站搞定。",
-    "browse_tools": "浏览工具",
+    "browse_tools": "浏览全部工具",
     "view_comparisons": "查看对比",
-    "popular_categories": "热门分类",
-    "trending_tools": "热门工具",
-    "latest_stats": "最新统计"
+    "explore_categories": "按分类探索",
+    "find_tools_desc": "为你的具体需求找到合适的 AI 工具",
+    "view_all": "查看全部",
+    "trending_tools": "热门 AI 工具",
+    "trending_desc": "本月最受欢迎的工具",
+    "view_all_tools": "查看全部工具",
+    "cta_title": "获取房地产 AI 工具的最新动态",
+    "cta_desc": "每周获取新工具、对比报告和行业统计数据，直接发送到你的邮箱。",
+    "cta_placeholder": "输入你的邮箱",
+    "cta_button": "订阅",
+    "cta_disclaimer": "不发垃圾邮件，可随时退订。"
   },
   "tool": {
     "visit_site": "访问官网",
