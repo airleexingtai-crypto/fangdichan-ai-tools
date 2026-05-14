@@ -44,7 +44,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
             <TooltipProvider>
               {children}
