@@ -9,13 +9,13 @@ import { Card, CardContent } from "@/components/ui/card";
 type Props = { params: Promise<{ slug: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const { data: stat } = await supabase.from("StatPage").select("*").eq("slug", slug).single();
   if (!stat) return { title: "Statistics Not Found" };
   return generatePageMeta({
     title: `${stat.title} — AI Real Estate Statistics`,
     description: stat.content?.slice(0, 160) || `Key statistics: ${stat.hero_stat} ${stat.hero_label}`,
-    path: `/en/stats/${slug}`,
+    path: locale === "en" ? `/stats/${slug}` : `/${locale}/stats/${slug}`,
     type: "article",
   });
 }
@@ -52,8 +52,8 @@ export default async function StatsPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Statistics", href: "/en/stats" },
-            { label: stat.title, href: `/en/stats/${slug}` },
+            { label: "Statistics", href: "/stats" },
+            { label: stat.title, href: `/stats/${slug}` },
           ]}
         />
 

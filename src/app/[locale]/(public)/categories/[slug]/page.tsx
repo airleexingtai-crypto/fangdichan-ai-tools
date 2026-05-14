@@ -8,13 +8,13 @@ import { ToolCard } from "@/components/ToolCard";
 type Props = { params: Promise<{ slug: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const { data: category } = await supabase.from("Category").select("*").eq("slug", slug).single();
   if (!category) return { title: "Category Not Found" };
   return generatePageMeta({
     title: `${category.name} AI Tools — Best AI for Real Estate ${category.name}`,
-    description: category.description?.slice(0, 160) || `Browse the best AI tools for ${category.name} in real estate. Compare pricing, features, and reviews.`,
-    path: `/en/categories/${slug}`,
+    description: category.description?.slice(0, 160) || `Browse the best AI tools for ${category.name} in real estate.`,
+    path: locale === "en" ? `/categories/${slug}` : `/${locale}/categories/${slug}`,
   });
 }
 
@@ -37,8 +37,8 @@ export default async function CategoryPage({ params }: Props) {
       <BreadcrumbNav
         className="mb-6"
         items={[
-          { label: "Categories", href: "/en/categories" },
-          { label: category.name, href: `/en/categories/${slug}` },
+          { label: "Categories", href: "/categories" },
+          { label: category.name, href: `/categories/${slug}` },
         ]}
       />
 
@@ -47,7 +47,6 @@ export default async function CategoryPage({ params }: Props) {
         <p className="text-muted-foreground mt-2">{category.description}</p>
       </div>
 
-      {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-3 mb-6 pb-4 border-b border-border">
         <span className="text-sm text-muted-foreground">{toolList.length} tools found</span>
       </div>

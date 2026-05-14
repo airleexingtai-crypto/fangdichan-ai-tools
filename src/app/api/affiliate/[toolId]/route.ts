@@ -20,7 +20,7 @@ export async function GET(
     if (error || !tool?.affiliate_url) {
       // No affiliate link — redirect to tool page
       return NextResponse.redirect(
-        new URL(`/en/tools/${tool?.slug || toolId}`, request.url)
+        new URL(`/tools/${tool?.slug || toolId}`, request.url)
       );
     }
 
@@ -34,7 +34,7 @@ export async function GET(
     // 302 redirect to actual affiliate URL
     return NextResponse.redirect(tool.affiliate_url);
   } catch {
-    return NextResponse.redirect(new URL("/en/tools", request.url));
+    return NextResponse.redirect(new URL("/tools", request.url));
   }
 }
 

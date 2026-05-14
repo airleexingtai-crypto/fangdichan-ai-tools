@@ -12,13 +12,13 @@ import { Clock, Signal, Wrench } from "lucide-react";
 type Props = { params: Promise<{ slug: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const { data: tutorial } = await supabase.from("Tutorial").select("*").eq("slug", slug).single();
   if (!tutorial) return { title: "Tutorial Not Found" };
   return generatePageMeta({
     title: `${tutorial.title} — AI for Real Estate Tutorial`,
     description: tutorial.description?.slice(0, 160) || "",
-    path: `/en/tutorials/${slug}`,
+    path: locale === "en" ? `/tutorials/${slug}` : `/${locale}/tutorials/${slug}`,
     type: "article",
   });
 }
@@ -57,8 +57,8 @@ export default async function TutorialPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Tutorials", href: "/en/tutorials" },
-            { label: tutorial.title, href: `/en/tutorials/${slug}` },
+            { label: "Tutorials", href: "/tutorials" },
+            { label: tutorial.title, href: `/tutorials/${slug}` },
           ]}
         />
 
@@ -83,7 +83,7 @@ export default async function TutorialPage({ params }: Props) {
                 <Wrench className="h-4 w-4" />
                 {referencedTools.map((t: any, i: number) => (
                   <span key={t.slug}>
-                    <a href={`/en/tools/${t.slug}`} className="no-style text-primary hover:text-accent-secondary">
+                    <a href={`/tools/${t.slug}`} className="no-style text-primary hover:text-accent-secondary">
                       {t.name}
                     </a>
                     {i < referencedTools.length - 1 && ", "}

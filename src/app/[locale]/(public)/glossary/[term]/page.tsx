@@ -1,8 +1,8 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateDefinedTermSchema } from "@/lib/seo/schema";
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,16 +10,17 @@ import { Badge } from "@/components/ui/badge";
 type Props = { params: Promise<{ term: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { term: termSlug } = await params;
+  const { term: termSlug, locale } = await params;
   return generatePageMeta({
     title: `${termSlug.replace(/-/g, " ")} — AI & Real Estate Glossary`,
     description: `Definition and explanation of ${termSlug.replace(/-/g, " ")} in the context of AI tools for real estate.`,
-    path: `/en/glossary/${termSlug}`,
+    path: locale === "en" ? `/glossary/${termSlug}` : `/${locale}/glossary/${termSlug}`,
   });
 }
 
 export default async function GlossaryPage({ params }: Props) {
-  const { term: termSlug } = await params;
+  const { term: termSlug, locale } = await params;
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
   const definition = glossaryTerms[termSlug] || null;
   if (!definition) notFound();
@@ -38,8 +39,8 @@ export default async function GlossaryPage({ params }: Props) {
         <BreadcrumbNav
           className="mb-6"
           items={[
-            { label: "Glossary", href: "/en/glossary" },
-            { label: definition.term, href: `/en/glossary/${termSlug}` },
+            { label: "Glossary", href: "/glossary" },
+            { label: definition.term, href: `/glossary/${termSlug}` },
           ]}
         />
 
@@ -64,11 +65,11 @@ export default async function GlossaryPage({ params }: Props) {
               <h2 className="text-xl font-semibold mb-3">Related Terms</h2>
               <div className="flex flex-wrap gap-2">
                 {definition.relatedTerms.map((rt: string) => (
-                  <a key={rt} href={`/en/glossary/${rt.toLowerCase().replace(/\s+/g, "-")}`} className="no-style">
+                  <Link key={rt} href={lhref(`/glossary/${rt.toLowerCase().replace(/\s+/g, "-")}`)} className="no-style">
                     <Badge variant="outline" className="cursor-pointer hover:bg-accent/10">
                       {rt}
                     </Badge>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -79,7 +80,6 @@ export default async function GlossaryPage({ params }: Props) {
   );
 }
 
-// Seed glossary data (Phase 1 — hardcoded, Phase 2 — moves to DB)
 const glossaryTerms: Record<string, { term: string; category: string; definition: string; longDefinition?: string; relatedTerms?: string[] }> = {
   "avm-automated-valuation-model": {
     term: "AVM (Automated Valuation Model)",

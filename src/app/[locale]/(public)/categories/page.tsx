@@ -1,24 +1,32 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
-import Link from "next/link";
 
-export const metadata = generatePageMeta({
-  title: "AI Tool Categories for Real Estate — Browse by Category",
-  description: "Browse AI tools for real estate by category. CRM, Property Search, Analytics, Marketing, and more.",
-  path: "/en/categories",
-});
+type Props = { params: Promise<{ locale: string }> };
 
-export default async function CategoriesPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMeta({
+    title: "AI Tool Categories for Real Estate — Browse by Category",
+    description: "Browse AI tools for real estate by category. CRM, Property Search, Analytics, Marketing, and more.",
+    path: locale === "en" ? "/categories" : `/${locale}/categories`,
+  });
+}
+
+export default async function CategoriesPage({ params }: Props) {
+  const { locale } = await params;
+  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: categories } = await supabase.from("Category").select("*").order("sort_order");
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <BreadcrumbNav items={[{ label: "Categories", href: "/en/categories" }]} />
+      <BreadcrumbNav items={[{ label: "Categories", href: "/categories" }]} />
       <h1 className="text-3xl font-bold mt-4 mb-6">AI Tool Categories</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {categories?.map((cat: any) => (
-          <Link key={cat.slug} href={`/en/categories/${cat.slug}`} className="no-style">
+          <Link key={cat.slug} href={lhref(`/categories/${cat.slug}`)} className="no-style">
             <div className="card-hover rounded-lg border border-border/50 bg-card p-5 text-center">
               <div className="text-2xl mb-2">{cat.icon || "📂"}</div>
               <h3 className="font-medium">{cat.name}</h3>

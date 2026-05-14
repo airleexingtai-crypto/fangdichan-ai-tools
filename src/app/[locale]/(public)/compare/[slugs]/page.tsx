@@ -11,12 +11,12 @@ import { Badge } from "@/components/ui/badge";
 type Props = { params: Promise<{ slugs: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slugs } = await params;
+  const { slugs, locale } = await params;
   const names = slugs.split("-vs-").map((s: string) => s.replace(/-/g, " "));
   return generatePageMeta({
     title: `${names.join(" vs ")} — Which AI Tool Wins?`,
     description: `Side-by-side comparison of ${names.join(" and ")}. Compare pricing, features, pros & cons, and find the best AI tool for your real estate needs.`,
-    path: `/en/compare/${slugs}`,
+    path: locale === "en" ? `/compare/${slugs}` : `/${locale}/compare/${slugs}`,
   });
 }
 
@@ -66,8 +66,8 @@ export default async function ComparisonPage({ params }: Props) {
       <BreadcrumbNav
         className="mb-6"
         items={[
-          { label: "Compare", href: "/en/compare" },
-          { label: `${tools[0].name} vs ${tools[1].name}`, href: `/en/compare/${slugs}` },
+          { label: "Compare", href: "/compare" },
+          { label: `${tools[0].name} vs ${tools[1].name}`, href: `/compare/${slugs}` },
         ]}
       />
 
