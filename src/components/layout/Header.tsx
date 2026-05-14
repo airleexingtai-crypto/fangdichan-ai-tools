@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/navigation";
+import { Link, usePathname, useRouter } from "@/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ export function Header() {
   const { theme, toggle } = useTheme();
   const pathname = usePathname(); // from @/navigation — no locale prefix
   const locale = useLocale();
+  const router = useRouter();
   const t = useTranslations("nav");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,6 +29,10 @@ export function Header() {
   };
 
   const switchTo = locale === "en" ? "zh" : "en";
+
+  const handleSwitchLocale = () => {
+    router.replace(pathname, { locale: switchTo });
+  };
 
   return (
     <header className="sticky top-0 z-50 glass-nav border-b border-border">
@@ -89,11 +94,9 @@ export function Header() {
             )}
 
             {/* Language Toggle */}
-            <Link href={pathname} locale={switchTo} className="no-style">
-              <Button variant="ghost" size="sm" className="h-9 text-xs font-medium">
-                {switchTo === "zh" ? "中文" : "EN"}
-              </Button>
-            </Link>
+            <Button variant="ghost" size="sm" className="h-9 text-xs font-medium" onClick={handleSwitchLocale}>
+              {switchTo === "zh" ? "中文" : "EN"}
+            </Button>
 
             {/* Theme Toggle */}
             <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggle}>
@@ -134,11 +137,9 @@ export function Header() {
                     );
                   })}
                   <div className="mt-4 pt-4 border-t border-border">
-                    <Link href={pathname} locale={switchTo} className="no-style">
-                      <Button variant="outline" size="sm" className="w-full text-sm">
-                        {switchTo === "zh" ? "切换到中文" : "Switch to English"}
-                      </Button>
-                    </Link>
+                    <Button variant="outline" size="sm" className="w-full text-sm" onClick={handleSwitchLocale}>
+                      {switchTo === "zh" ? "切换到中文" : "Switch to English"}
+                    </Button>
                   </div>
                 </div>
               </SheetContent>
