@@ -24,11 +24,14 @@ function createNullSupabase() {
     eq: () => queryFn(),
     neq: () => queryFn(),
     in: () => queryFn(),
+    or: () => queryFn(),
+    ilike: () => queryFn(),
     order: () => queryFn(),
     limit: () => queryFn(),
+    range: () => queryFn(),
     single: single,
     maybeSingle: single,
-    then: (resolve: (v: unknown) => void) => resolve({ data: [], error: null }),
+    then: (resolve: (v: unknown) => void) => resolve({ data: [], count: 0, error: null }),
   });
 
   return {
