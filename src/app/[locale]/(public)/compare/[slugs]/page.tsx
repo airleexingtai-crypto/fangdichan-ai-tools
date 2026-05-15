@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
+import { getTranslation, applyTranslation } from "@/lib/translate";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { AffiliateCTA } from "@/components/AffiliateCTA";
@@ -29,18 +30,21 @@ export default async function ComparisonPage({ params }: Props) {
 
   if (toolSlugs.length < 2 || toolSlugs.length > 5) notFound();
 
-  const { data: tools } = await supabase
-    .from("Tool")
-    .select("*")
-    .in("slug", toolSlugs)
-    .eq("status", "PUBLISHED");
+  const [{ data: tools }, { data: comparison }] = await Promise.all([
+    supabase.from("Tool").select("*").in("slug", toolSlugs).eq("status", "PUBLISHED"),
+    supabase.from("Comparison").select("*").eq("slug", slugs).eq("status", "PUBLISHED").maybeSingle(),
+  ]);
 
   if (!tools || tools.length < 2) notFound();
 
-  // Build comparison data from tool JSON fields
-  const allFeatures = tools.flatMap((t: any) =>
-    ((t.features_json as any[]) || []).map((f: any) => f.name)
-  );
+  const translation = comparison ? await getTranslation("Comparison", comparison.id, locale) : null;
+  const displayComparison = comparison ? applyTranslation(comparison, translation, ["title", "description", "content"]) : null;
+
+  // Normalize features: DB may store string[] or { name: string }[]
+  const getFeatureNames = (raw: any[] | undefined): string[] =>
+    (raw || []).map((f: any) => (typeof f === "string" ? f : f.name));
+
+  const allFeatures = tools.flatMap((t: any) => getFeatureNames(t.features_json));
   const uniqueFeatures = [...new Set(allFeatures)];
 
   const comparisonData = {
@@ -52,8 +56,8 @@ export default async function ComparisonPage({ params }: Props) {
         t.pricing_model,
         t.api_available,
         ...uniqueFeatures.map((f) => {
-          const feat = ((t.features_json as any[]) || []).find((x: any) => x.name === f);
-          return feat ? true : false;
+          const names = getFeatureNames(t.features_json);
+          return names.includes(f);
         }),
       ],
       winner: false,
@@ -93,6 +97,26 @@ export default async function ComparisonPage({ params }: Props) {
 
       {/* Comparison Table */}
       <ComparisonTable data={comparisonData} className="mb-10" />
+
+      {/* Detailed Analysis */}
+      {displayComparison?.content && (
+        <div
+          className="prose prose-invert max-w-none mb-10 prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-a:text-primary prose-strong:text-foreground"
+          dangerouslySetInnerHTML={{ __html: displayComparison.content }}
+        />
+      )}
+
+      {/* Winner */}
+      {displayComparison?.winner_json && (
+        <Card className="mb-10 border-primary/30 bg-primary/5">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-2">Our Pick</h3>
+            <p className="text-muted-foreground">
+              {(comparison.winner_json as any).note}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tool Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">

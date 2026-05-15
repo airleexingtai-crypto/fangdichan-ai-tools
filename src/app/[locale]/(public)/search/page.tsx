@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
@@ -23,7 +23,6 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 export default async function SearchPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pages" });
-  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { q } = await searchParams;
   const query = q?.trim() || "";
 
@@ -71,7 +70,7 @@ export default async function SearchPage({ params, searchParams }: Props) {
           <p className="text-lg text-muted-foreground mb-4">{t("search_no_results").replace("{query}", query)}</p>
           <p className="text-sm text-muted-foreground">
             {t("search_suggest")}{" "}
-            <Link href={lhref("/tools")} className="text-primary">{t("search_browse")}</Link>.
+            <Link href="/tools" className="text-primary">{t("search_browse")}</Link>.
           </p>
         </div>
       ) : null}

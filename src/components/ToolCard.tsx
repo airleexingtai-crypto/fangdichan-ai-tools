@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "@/navigation";
+import { useTranslations } from "next-intl";
 
 type ToolCardProps = {
   slug: string;
@@ -29,14 +30,8 @@ export function ToolCard({
   categoryName,
   className,
 }: ToolCardProps) {
-  const pricingLabel =
-    pricingModel === "FREE"
-      ? "Free"
-      : pricingModel === "FREEMIUM"
-      ? "Freemium"
-      : pricingModel === "FREE_TRIAL"
-      ? "Free Trial"
-      : "Paid";
+  const t = useTranslations("tool");
+  const pricingLabel = t(`pricing_${pricingModel.toLowerCase()}` as any) || pricingModel;
 
   return (
     <Link href={`/tools/${slug}`} className="no-style block group">

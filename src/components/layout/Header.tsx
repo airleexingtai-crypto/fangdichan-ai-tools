@@ -31,19 +31,31 @@ export function Header() {
     }
   };
 
-  // Determine locale from the raw URL (most reliable source of truth)
-  const urlLocale: "en" | "zh" = rawPathname.startsWith("/zh") ? "zh" : "en";
-  const switchTo = urlLocale === "en" ? "zh" : "en";
+  const allLocales = [
+    { code: "en", label: "English" },
+    { code: "zh", label: "中文" },
+    { code: "ko", label: "한국어" },
+    { code: "ja", label: "日本語" },
+    { code: "de", label: "Deutsch" },
+    { code: "it", label: "Italiano" },
+    { code: "fr", label: "Français" },
+  ];
 
-  // Path without locale prefix (from raw URL)
-  const basePath = urlLocale === "en" ? rawPathname : (rawPathname.replace(/^\/zh/, "") || "/");
+  // Derive current locale from URL prefix
+  const urlLocale = allLocales.find((l) => rawPathname === `/${l.code}` || rawPathname.startsWith(`/${l.code}/`))?.code || "en";
 
-  // Build target URL for language switch
-  const targetHref = switchTo === "en" ? basePath : `/${switchTo}${basePath === "/" ? "" : basePath}`;
+  // Strip locale prefix from URL to get the base path
+  const basePath = urlLocale === "en"
+    ? rawPathname
+    : (rawPathname.replace(new RegExp(`^/${urlLocale}`), "") || "/");
 
-  const handleSwitchLocale = () => {
-    window.location.href = targetHref;
+  const switchLocale = (newLocale: string) => {
+    const target = newLocale === "en" ? basePath : `/${newLocale}${basePath === "/" ? "" : basePath}`;
+    window.location.href = target;
   };
+
+  const [langOpen, setLangOpen] = useState(false);
+  const currentLabel = allLocales.find((l) => l.code === urlLocale)?.label || "EN";
 
   return (
     <header className="sticky top-0 z-50 glass-nav border-b border-border">
@@ -103,10 +115,32 @@ export function Header() {
               </Button>
             )}
 
-            {/* Language Toggle */}
-            <Button variant="ghost" size="sm" className="h-9 text-xs font-medium" onClick={handleSwitchLocale}>
-              {switchTo === "zh" ? "中文" : "EN"}
-            </Button>
+            {/* Language Dropdown */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 text-xs font-medium gap-1"
+                onClick={() => setLangOpen(!langOpen)}
+                onBlur={() => setTimeout(() => setLangOpen(false), 150)}
+              >
+                {currentLabel}
+                <svg className="h-3 w-3 ml-0.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 8 5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l3 3 3-3"/></svg>
+              </Button>
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg py-1 z-50 min-w-[110px]">
+                  {allLocales.map((l) => (
+                    <button
+                      key={l.code}
+                      className={`w-full text-left px-3 py-1.5 text-sm hover:bg-accent/10 transition-colors ${l.code === urlLocale ? "text-primary font-medium" : "text-muted-foreground"}`}
+                      onMouseDown={() => switchLocale(l.code)}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Theme Toggle */}
             <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggle}>
@@ -147,9 +181,18 @@ export function Header() {
                     );
                   })}
                   <div className="mt-4 pt-4 border-t border-border">
-                    <Button variant="outline" size="sm" className="w-full text-sm" onClick={handleSwitchLocale}>
-                      {switchTo === "zh" ? "切换到中文" : "Switch to English"}
-                    </Button>
+                    <p className="text-xs text-muted-foreground mb-2 px-3">Language / 语言</p>
+                    <div className="grid grid-cols-2 gap-1">
+                      {allLocales.map((l) => (
+                        <button
+                          key={l.code}
+                          className={`text-left px-3 py-1.5 rounded text-sm transition-colors ${l.code === urlLocale ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                          onClick={() => switchLocale(l.code)}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </SheetContent>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
@@ -20,7 +20,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ComparePage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pages" });
-  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: comparisons } = await supabase.from("Comparison").select("*").eq("status", "PUBLISHED").order("created_at", { ascending: false });
 
   return (
@@ -31,7 +30,7 @@ export default async function ComparePage({ params }: Props) {
       {comparisons && comparisons.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {comparisons.map((c: any) => (
-            <Link key={c.slug} href={lhref(`/compare/${c.slug}`)} className="no-style">
+            <Link key={c.slug} href={`/compare/${c.slug}`} className="no-style">
               <div className="card-hover rounded-lg border border-border/50 bg-card p-5">
                 <h3 className="font-semibold">{c.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{c.description}</p>

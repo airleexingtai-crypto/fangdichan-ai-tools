@@ -4,12 +4,14 @@ import { supabase } from "@/lib/supabase";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
 
-  const [tools, categories, tutorials, stats, comparisons] = await Promise.all([
+  const [tools, categories, tutorials, stats, comparisons, blogs, glossary] = await Promise.all([
     supabase.from("Tool").select("slug, updated_at").eq("status", "PUBLISHED"),
     supabase.from("Category").select("slug, updated_at"),
     supabase.from("Tutorial").select("slug, updated_at").eq("status", "PUBLISHED"),
     supabase.from("StatPage").select("slug, updated_at").eq("status", "PUBLISHED"),
     supabase.from("Comparison").select("slug, updated_at").eq("status", "PUBLISHED"),
+    supabase.from("BlogPost").select("slug, updated_at").eq("status", "PUBLISHED"),
+    supabase.from("GlossaryTerm").select("slug, updated_at").eq("status", "PUBLISHED"),
   ]);
 
   // Helper: generate bilingual URLs — en has no prefix, zh uses /zh/ prefix
@@ -30,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/search", new Date(), "weekly", 0.3),
   ];
 
-  const detailPages = (items: any[], pathPrefix: string, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) =>
+  const detailPages = (items: any[] | null, pathPrefix: string, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) =>
     (items || []).flatMap((item: any) =>
       bilingual(`/${pathPrefix}/${item.slug}`, new Date(item.updated_at), freq, priority)
     );
@@ -42,5 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...detailPages(tutorials.data, "tutorials", "monthly", 0.6),
     ...detailPages(stats.data, "stats", "monthly", 0.6),
     ...detailPages(comparisons.data, "compare", "weekly", 0.8),
+    ...detailPages(blogs.data, "blog", "weekly", 0.7),
+    ...detailPages(glossary.data, "glossary", "monthly", 0.5),
   ];
 }

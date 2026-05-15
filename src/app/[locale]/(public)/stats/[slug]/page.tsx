@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateDatasetSchema } from "@/lib/seo/schema";
 import { supabase } from "@/lib/supabase";
+import { getTranslation, applyTranslation } from "@/lib/translate";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -27,14 +28,23 @@ export default async function StatsPage({ params }: Props) {
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: stat } = await supabase
     .from("StatPage")
-    .select("*, sources(*)")
+    .select("*")
     .eq("slug", slug)
     .eq("status", "PUBLISHED")
-    .single();
+    .maybeSingle();
 
   if (!stat) notFound();
 
-  const sources = stat.sources || [];
+  const translation = await getTranslation("StatPage", stat.id, locale);
+  const displayStat = applyTranslation(stat, translation, ["title", "content", "hero_label"]);
+
+  const { data: sourcesData } = await supabase
+    .from("StatSource")
+    .select("*")
+    .eq("stat_page_id", stat.id);
+
+  const sources = sourcesData || [];
+
 
   return (
     <>
@@ -43,8 +53,8 @@ export default async function StatsPage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generateDatasetSchema({
-              title: stat.title,
-              description: stat.content?.slice(0, 300) || "",
+              title: displayStat.title,
+              description: displayStat.content?.slice(0, 300) || "",
               citations: sources.map((s: any) => ({ name: s.title, url: s.url })),
             })
           ),
@@ -56,7 +66,7 @@ export default async function StatsPage({ params }: Props) {
           className="mb-6"
           items={[
             { label: t("breadcrumb_stats"), href: "/stats" },
-            { label: stat.title, href: `/stats/${slug}` },
+            { label: displayStat.title, href: `/stats/${slug}` },
           ]}
         />
 
@@ -65,19 +75,19 @@ export default async function StatsPage({ params }: Props) {
           {stat.hero_stat && (
             <div className="text-center py-12 mb-8 rounded-xl border border-border bg-card">
               <div className="text-6xl font-bold text-gradient">{stat.hero_stat}</div>
-              {stat.hero_label && (
-                <p className="text-xl text-muted-foreground mt-2">{stat.hero_label}</p>
+              {displayStat.hero_label && (
+                <p className="text-xl text-muted-foreground mt-2">{displayStat.hero_label}</p>
               )}
             </div>
           )}
 
-          <h1 className="text-3xl font-bold mb-6">{stat.title}</h1>
+          <h1 className="text-3xl font-bold mb-6">{displayStat.title}</h1>
 
           {/* Content */}
-          {stat.content && (
+          {displayStat.content && (
             <div
               className="prose prose-invert max-w-none mb-10"
-              dangerouslySetInnerHTML={{ __html: stat.content }}
+              dangerouslySetInnerHTML={{ __html: displayStat.content }}
             />
           )}
 

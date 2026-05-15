@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
@@ -11,7 +11,6 @@ import { supabase } from "@/lib/supabase";
 type Props = { params: Promise<{ locale: string }> };
 
 // localePrefix: "as-needed" — default locale (en) needs NO prefix
-const lhref = (locale: string, path: string) => locale === "en" ? path : `/${locale}${path}`;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -25,37 +24,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-const categories = [
-  { icon: "🏠", name: "Property Search", slug: "property-search", count: 12 },
-  { icon: "📊", name: "Analytics & Data", slug: "analytics", count: 8 },
-  { icon: "🤖", name: "Automation", slug: "automation", count: 15 },
-  { icon: "💬", name: "CRM & Communication", slug: "crm", count: 10 },
-  { icon: "📸", name: "Marketing & Media", slug: "marketing", count: 9 },
-  { icon: "📋", name: "Transaction Management", slug: "transaction", count: 6 },
-];
-
 const stats = [
   { value: "47%", labelKey: "stat_adoption" },
   { value: "$15B", labelKey: "stat_market" },
   { value: "3.2x", labelKey: "stat_productivity" },
 ];
 
-const statLabels: Record<string, Record<string, string>> = {
-  en: { stat_adoption: "of agents now use AI tools", stat_market: "AI in real estate market by 2027", stat_productivity: "productivity boost with AI" },
-  zh: { stat_adoption: "的经纪人已使用 AI 工具", stat_market: "2027 年 AI 房地产市场预测", stat_productivity: "AI 带来的生产力提升" },
-};
-
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
-  const labels = statLabels[locale as keyof typeof statLabels] || statLabels.en;
 
-  const { data: trendingTools } = await supabase
-    .from("Tool")
-    .select("*")
-    .eq("status", "PUBLISHED")
-    .order("avg_rating", { ascending: false })
-    .limit(6);
+  const [{ data: trendingTools }, { data: dbCategories }, { data: toolCategories }, { data: publishedTools }] = await Promise.all([
+    supabase.from("Tool").select("*").eq("status", "PUBLISHED").order("avg_rating", { ascending: false }).limit(6),
+    supabase.from("Category").select("*").order("sort_order"),
+    supabase.from("ToolCategory").select("tool_id, category_id"),
+    supabase.from("Tool").select("id").eq("status", "PUBLISHED"),
+  ]);
+
+  // Build a set of published tool IDs for fast lookup
+  const publishedIds = new Set((publishedTools || []).map((t: any) => t.id));
+
+  // Count published tools per category
+  const countMap: Record<string, number> = {};
+  (toolCategories || []).forEach((tc: any) => {
+    if (publishedIds.has(tc.tool_id)) {
+      countMap[tc.category_id] = (countMap[tc.category_id] || 0) + 1;
+    }
+  });
+
+  const categoryCards = (dbCategories || []).map((cat: any) => ({
+    ...cat,
+    count: countMap[cat.id] || 0,
+  }));
 
   return (
     <>
@@ -74,13 +74,13 @@ export default async function HomePage({ params }: Props) {
             {t("hero_subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={lhref(locale, "/tools")} className="no-style">
+            <Link href={"/tools"} className="no-style">
               <Button size="lg" className="text-base">
                 <Search className="mr-2 h-4 w-4" />
                 {t("browse_tools")}
               </Button>
             </Link>
-            <Link href={lhref(locale, "/compare")} className="no-style">
+            <Link href={"/compare"} className="no-style">
               <Button variant="outline" size="lg" className="text-base">
                 <BarChart3 className="mr-2 h-4 w-4" />
                 {t("view_comparisons")}
@@ -92,7 +92,7 @@ export default async function HomePage({ params }: Props) {
             {stats.map((stat) => (
               <div key={stat.labelKey} className="text-center">
                 <div className="text-2xl font-bold text-gradient">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{labels[stat.labelKey]}</div>
+                <div className="text-sm text-muted-foreground">{t(stat.labelKey as any)}</div>
               </div>
             ))}
           </div>
@@ -106,7 +106,7 @@ export default async function HomePage({ params }: Props) {
             <h2 className="text-2xl font-bold">{t("explore_categories")}</h2>
             <p className="text-muted-foreground mt-1">{t("find_tools_desc")}</p>
           </div>
-          <Link href={lhref(locale, "/categories")} className="no-style">
+          <Link href={"/categories"} className="no-style">
             <Button variant="ghost" size="sm">
               {t("view_all")} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -114,14 +114,16 @@ export default async function HomePage({ params }: Props) {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {categories.map((cat) => (
-            <Link key={cat.slug} href={lhref(locale, `/categories/${cat.slug}`)} className="no-style group">
+          {categoryCards.map((cat: any) => (
+            <Link key={cat.slug} href={`/categories/${cat.slug}`} className="no-style group">
               <div className="card-hover rounded-lg border border-border/50 bg-card p-4 text-center h-full">
                 <div className="text-2xl mb-2">{cat.icon}</div>
                 <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
                   {cat.name}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">{cat.count} tools</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t("tools_count").replace("{count}", String(cat.count || 0))}
+                </p>
               </div>
             </Link>
           ))}
@@ -135,27 +137,33 @@ export default async function HomePage({ params }: Props) {
             <h2 className="text-2xl font-bold">{t("trending_tools")}</h2>
             <p className="text-muted-foreground mt-1">{t("trending_desc")}</p>
           </div>
-          <Link href={lhref(locale, "/tools")} className="no-style">
+          <Link href={"/tools"} className="no-style">
             <Button variant="ghost" size="sm">
               {t("view_all_tools")} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {(trendingTools && trendingTools.length > 0 ? trendingTools : placeholderTools).map((tool: any) => (
-            <ToolCard
-              key={tool.slug}
-              slug={tool.slug}
-              name={tool.name}
-              tagline={tool.tagline}
-              logoUrl={tool.logo_url}
-              pricingModel={tool.pricing_model || "FREE"}
-              avgRating={tool.avg_rating}
-              reviewCount={tool.review_count}
-            />
-          ))}
-        </div>
+        {trendingTools && trendingTools.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {trendingTools.map((tool: any) => (
+              <ToolCard
+                key={tool.slug}
+                slug={tool.slug}
+                name={tool.name}
+                tagline={tool.tagline}
+                logoUrl={tool.logo_url}
+                pricingModel={tool.pricing_model || "FREE"}
+                avgRating={tool.avg_rating}
+                reviewCount={tool.review_count}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground py-8">
+            {t("loading_tools")}
+          </p>
+        )}
       </section>
 
       {/* CTA */}
@@ -179,17 +187,3 @@ export default async function HomePage({ params }: Props) {
   );
 }
 
-const placeholderTools = [
-  {
-    slug: "zillow-ai", name: "Zillow AI", tagline: "AI-powered property valuation and market predictions",
-    logo_url: null, pricing_model: "FREEMIUM", avg_rating: 4.5, review_count: 128,
-  },
-  {
-    slug: "revaluate", name: "Revaluate", tagline: "Predictive analytics to identify likely sellers",
-    logo_url: null, pricing_model: "PAID", avg_rating: 4.7, review_count: 89,
-  },
-  {
-    slug: "quantarium", name: "Quantarium", tagline: "Automated valuation models and property intelligence",
-    logo_url: null, pricing_model: "ENTERPRISE", avg_rating: 4.3, review_count: 56,
-  },
-];

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
@@ -20,7 +20,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CategoriesPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pages" });
-  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: categories } = await supabase.from("Category").select("*").order("sort_order");
 
   return (
@@ -29,7 +28,7 @@ export default async function CategoriesPage({ params }: Props) {
       <h1 className="text-3xl font-bold mt-4 mb-6">{t("categories_title")}</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {categories?.map((cat: any) => (
-          <Link key={cat.slug} href={lhref(`/categories/${cat.slug}`)} className="no-style">
+          <Link key={cat.slug} href={`/categories/${cat.slug}`} className="no-style">
             <div className="card-hover rounded-lg border border-border/50 bg-card p-5 text-center">
               <div className="text-2xl mb-2">{cat.icon || "📂"}</div>
               <h3 className="font-medium">{cat.name}</h3>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { supabase } from "@/lib/supabase";
@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function TutorialsPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pages" });
-  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: tutorials } = await supabase.from("Tutorial").select("*").eq("status", "PUBLISHED").order("created_at", { ascending: false });
 
   return (
@@ -30,7 +29,7 @@ export default async function TutorialsPage({ params }: Props) {
       <h1 className="text-3xl font-bold mt-4 mb-6">{t("tutorials_title")}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tutorials?.map((tut: any) => (
-          <Link key={tut.slug} href={lhref(`/tutorials/${tut.slug}`)} className="no-style">
+          <Link key={tut.slug} href={`/tutorials/${tut.slug}`} className="no-style">
             <div className="card-hover rounded-lg border border-border/50 bg-card p-5 h-full">
               <h3 className="font-semibold mb-2">{tut.title}</h3>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{tut.description}</p>

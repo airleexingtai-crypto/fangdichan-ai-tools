@@ -1,9 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateHowToSchema } from "@/lib/seo/schema";
 import { supabase } from "@/lib/supabase";
+import { getTranslation, applyTranslation } from "@/lib/translate";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,15 +32,28 @@ export default async function TutorialPage({ params }: Props) {
   const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
   const { data: tutorial } = await supabase
     .from("Tutorial")
-    .select("*, tools(TutorialTool(tool:Tool(*)))")
+    .select("*")
     .eq("slug", slug)
     .eq("status", "PUBLISHED")
-    .single();
+    .maybeSingle();
 
   if (!tutorial) notFound();
 
-  const referencedTools = tutorial.tools?.map((tt: any) => tt.tool).filter(Boolean) || [];
-  const steps = extractSteps(tutorial.content);
+  const translation = await getTranslation("Tutorial", tutorial.id, locale);
+  const displayTutorial = applyTranslation(tutorial, translation, ["title", "description", "content"]);
+
+  // Fetch referenced tools via TutorialTool join table
+  const { data: toolLinks } = await supabase
+    .from("TutorialTool")
+    .select("tool_id")
+    .eq("tutorial_id", tutorial.id);
+
+  const toolIds = (toolLinks || []).map((l: any) => l.tool_id);
+  const { data: toolsData } = toolIds.length > 0
+    ? await supabase.from("Tool").select("*").in("id", toolIds)
+    : { data: [] };
+  const referencedTools = toolsData || [];
+  const steps = extractSteps(displayTutorial.content);
 
   return (
     <>
@@ -47,8 +62,8 @@ export default async function TutorialPage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generateHowToSchema({
-              title: tutorial.title,
-              description: tutorial.description,
+              title: displayTutorial.title,
+              description: displayTutorial.description,
               steps: steps.map((s) => ({ name: s.title || s.text.slice(0, 60), text: s.text })),
               estimatedMinutes: tutorial.estimated_minutes,
             })
@@ -61,14 +76,14 @@ export default async function TutorialPage({ params }: Props) {
           className="mb-6"
           items={[
             { label: t("breadcrumb_tutorials"), href: "/tutorials" },
-            { label: tutorial.title, href: `/tutorials/${slug}` },
+            { label: displayTutorial.title, href: `/tutorials/${slug}` },
           ]}
         />
 
         {/* Header */}
         <article>
-          <h1 className="text-3xl font-bold mb-3">{tutorial.title}</h1>
-          <p className="text-lg text-muted-foreground mb-4">{tutorial.description}</p>
+          <h1 className="text-3xl font-bold mb-3">{displayTutorial.title}</h1>
+          <p className="text-lg text-muted-foreground mb-4">{displayTutorial.description}</p>
 
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-8">
             {tutorial.estimated_minutes && (
@@ -86,9 +101,9 @@ export default async function TutorialPage({ params }: Props) {
                 <Wrench className="h-4 w-4" />
                 {referencedTools.map((t: any, i: number) => (
                   <span key={t.slug}>
-                    <a href={`/tools/${t.slug}`} className="no-style text-primary hover:text-accent-secondary">
+                    <Link href={`/tools/${t.slug}`} className="no-style text-primary hover:text-accent-secondary">
                       {t.name}
-                    </a>
+                    </Link>
                     {i < referencedTools.length - 1 && ", "}
                   </span>
                 ))}
@@ -98,8 +113,8 @@ export default async function TutorialPage({ params }: Props) {
 
           {/* Content */}
           <div className="prose prose-invert max-w-none mb-10">
-            {tutorial.content ? (
-              <div dangerouslySetInnerHTML={{ __html: tutorial.content }} />
+            {displayTutorial.content ? (
+              <div dangerouslySetInnerHTML={{ __html: displayTutorial.content }} />
             ) : (
               <div className="space-y-4">
                 {steps.map((step, i) => (
@@ -127,7 +142,7 @@ export default async function TutorialPage({ params }: Props) {
         {/* Referenced Tools */}
         {referencedTools.length > 0 && (
           <section className="border-t border-border pt-8">
-            <h2 className="text-xl font-semibold mb-4">Tools Mentioned in This Tutorial</h2>
+            <h2 className="text-xl font-semibold mb-4">{t("tools_used")}</h2>
             <div className="space-y-3">
               {referencedTools.map((tool: any) => (
                 <AffiliateCTA

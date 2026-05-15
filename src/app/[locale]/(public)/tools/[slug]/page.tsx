@@ -236,7 +236,7 @@ export default async function ToolPage({ params }: Props) {
                 <Card className="border-accent-success/20">
                   <CardContent className="p-4">
                     <h3 className="font-medium text-accent-success mb-3 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4" /> {locale === "zh" ? "优点" : "Pros"}
+                      <CheckCircle2 className="h-4 w-4" /> {toolT("pros")}
                     </h3>
                     <ul className="space-y-2">
                       {pros.map((pro: string, i: number) => (
@@ -251,7 +251,7 @@ export default async function ToolPage({ params }: Props) {
                 <Card className="border-destructive/20">
                   <CardContent className="p-4">
                     <h3 className="font-medium text-destructive mb-3 flex items-center gap-2">
-                      <XCircle className="h-4 w-4" /> {locale === "zh" ? "缺点" : "Cons"}
+                      <XCircle className="h-4 w-4" /> {toolT("cons")}
                     </h3>
                     <ul className="space-y-2">
                       {cons.map((con: string, i: number) => (
@@ -317,7 +317,7 @@ export default async function ToolPage({ params }: Props) {
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">{pgT("api_label")}</dt>
-                    <dd className="font-medium">{tool.api_available ? (locale === "zh" ? "可用" : "Available") : "N/A"}</dd>
+                    <dd className="font-medium">{tool.api_available ? toolT("available") : toolT("not_available")}</dd>
                   </div>
                   {tool.founded_year && (
                     <div className="flex justify-between">

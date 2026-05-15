@@ -1,8 +1,10 @@
 import { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { generatePageMeta } from "@/lib/seo/metadata";
 import { generateDefinedTermSchema } from "@/lib/seo/schema";
+import { supabase } from "@/lib/supabase";
+import { getTranslation, applyTranslation } from "@/lib/translate";
 import { notFound } from "next/navigation";
 import { BreadcrumbNav } from "@/components/layout/BreadcrumbNav";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,9 +14,25 @@ type Props = { params: Promise<{ term: string; locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { term: termSlug, locale } = await params;
+  const { data: entry } = await supabase
+    .from("GlossaryTerm")
+    .select("*")
+    .eq("slug", termSlug)
+    .eq("status", "PUBLISHED")
+    .maybeSingle();
+
+  if (!entry) {
+    return generatePageMeta({
+      title: "Term Not Found",
+      description: "",
+      path: locale === "en" ? `/glossary/${termSlug}` : `/${locale}/glossary/${termSlug}`,
+      noIndex: true,
+    });
+  }
+
   return generatePageMeta({
-    title: `${termSlug.replace(/-/g, " ")} — AI & Real Estate Glossary`,
-    description: `Definition and explanation of ${termSlug.replace(/-/g, " ")} in the context of AI tools for real estate.`,
+    title: `${entry.term} — AI & Real Estate Glossary`,
+    description: entry.definition?.slice(0, 160) || "",
     path: locale === "en" ? `/glossary/${termSlug}` : `/${locale}/glossary/${termSlug}`,
   });
 }
@@ -22,54 +40,75 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function GlossaryPage({ params }: Props) {
   const { term: termSlug, locale } = await params;
   const t = await getTranslations({ locale, namespace: "pages" });
-  const lhref = (path: string) => locale === "en" ? path : `/${locale}${path}`;
 
-  const definition = glossaryTerms[termSlug] || null;
-  if (!definition) notFound();
+  const { data: entry } = await supabase
+    .from("GlossaryTerm")
+    .select("*")
+    .eq("slug", termSlug)
+    .eq("status", "PUBLISHED")
+    .maybeSingle();
+
+  if (!entry) notFound();
+
+  const translation = await getTranslation("GlossaryTerm", entry.id, locale);
+  const displayEntry = applyTranslation(entry, translation, ["term", "definition"]);
+
+  // Resolve related slugs to full terms for display
+  const relatedSlugs: string[] = (entry.related_slugs as string[]) || [];
+  const { data: relatedTerms } = relatedSlugs.length > 0
+    ? await supabase.from("GlossaryTerm").select("slug, term").in("slug", relatedSlugs)
+    : { data: [] };
 
   const termSchema = generateDefinedTermSchema({
-    name: definition.term,
-    definition: definition.definition,
-    category: "AI Tools for Real Estate Glossary",
+    name: displayEntry.term,
+    definition: displayEntry.definition,
+    category: entry.category || "AI Real Estate Glossary",
   });
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(termSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(termSchema) }}
+      />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <BreadcrumbNav
           className="mb-6"
           items={[
             { label: t("breadcrumb_glossary"), href: "/glossary" },
-            { label: definition.term, href: `/glossary/${termSlug}` },
+            { label: displayEntry.term, href: `/glossary/${termSlug}` },
           ]}
         />
 
         <article>
-          <h1 className="text-3xl font-bold mb-2">{definition.term}</h1>
-          <Badge variant="secondary" className="mb-6">{definition.category}</Badge>
+          <h1 className="text-3xl font-bold mb-2">{displayEntry.term}</h1>
+          {entry.category && (
+            <Badge variant="secondary" className="mb-6">{entry.category}</Badge>
+          )}
 
           <Card className="mb-8">
             <CardContent className="p-6">
-              <h2 className="font-semibold text-sm text-muted-foreground mb-2">{t("glossary_definition")}</h2>
-              <p className="text-lg leading-relaxed">{definition.definition}</p>
-              {definition.longDefinition && (
+              <h2 className="font-semibold text-sm text-muted-foreground mb-2">
+                {t("glossary_definition")}
+              </h2>
+              <p className="text-lg leading-relaxed">{displayEntry.definition}</p>
+              {displayEntry.long_definition && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-muted-foreground">{definition.longDefinition}</p>
+                  <p className="text-muted-foreground">{displayEntry.long_definition}</p>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {definition.relatedTerms && definition.relatedTerms.length > 0 && (
+          {relatedTerms && relatedTerms.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-3">{t("glossary_related")}</h2>
               <div className="flex flex-wrap gap-2">
-                {definition.relatedTerms.map((rt: string) => (
-                  <Link key={rt} href={lhref(`/glossary/${rt.toLowerCase().replace(/\s+/g, "-")}`)} className="no-style">
+                {relatedTerms.map((rt: any) => (
+                  <Link key={rt.slug} href={`/glossary/${rt.slug}`} className="no-style">
                     <Badge variant="outline" className="cursor-pointer hover:bg-accent/10">
-                      {rt}
+                      {rt.term}
                     </Badge>
                   </Link>
                 ))}
@@ -81,25 +120,3 @@ export default async function GlossaryPage({ params }: Props) {
     </>
   );
 }
-
-const glossaryTerms: Record<string, { term: string; category: string; definition: string; longDefinition?: string; relatedTerms?: string[] }> = {
-  "avm-automated-valuation-model": {
-    term: "AVM (Automated Valuation Model)",
-    category: "Property Valuation",
-    definition: "An AI-powered system that estimates property values using mathematical modeling, comparable sales data, and property characteristics — without requiring a physical appraisal.",
-    longDefinition: "AVMs are used by lenders, real estate agents, and investors to quickly assess property values. Modern AI-enhanced AVMs incorporate machine learning to improve accuracy over traditional statistical models, often factoring in satellite imagery, neighborhood trends, and market volatility.",
-    relatedTerms: ["Machine Learning", "Property Valuation", "Predictive Analytics"],
-  },
-  "predictive-analytics": {
-    term: "Predictive Analytics",
-    category: "Data Science",
-    definition: "The use of historical data, statistical algorithms, and machine learning to predict future outcomes — in real estate, this means forecasting property values, identifying likely sellers, or predicting market trends.",
-    relatedTerms: ["Machine Learning", "AVM", "Lead Scoring"],
-  },
-  "nlp-natural-language-processing": {
-    term: "NLP (Natural Language Processing)",
-    category: "AI Technology",
-    definition: "A branch of AI that enables computers to understand, interpret, and generate human language — used in real estate for chatbots, document parsing, and automated listing descriptions.",
-    relatedTerms: ["Machine Learning", "Chatbot", "Generative AI"],
-  },
-};

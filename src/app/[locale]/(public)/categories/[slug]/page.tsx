@@ -20,17 +20,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
-  const { data: category } = await supabase.from("Category").select("*").eq("slug", slug).single();
+  const { data: category } = await supabase.from("Category").select("*").eq("slug", slug).maybeSingle();
   if (!category) notFound();
 
-  const { data: tools } = await supabase
+  const { data: toolLinks } = await supabase
     .from("ToolCategory")
-    .select("tool:Tool(*)")
-    .eq("categoryId", category.id)
-    .eq("tool.status", "PUBLISHED")
+    .select("tool_id, is_primary")
+    .eq("category_id", category.id)
     .order("is_primary", { ascending: false });
 
-  const toolList = tools?.map((tc: any) => tc.tool).filter(Boolean) || [];
+  const toolIds = (toolLinks || []).map((l: any) => l.tool_id);
+  const { data: tools } = toolIds.length > 0
+    ? await supabase.from("Tool").select("*").in("id", toolIds).eq("status", "PUBLISHED")
+    : { data: [] };
+
+  const toolList = tools || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

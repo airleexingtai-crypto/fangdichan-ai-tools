@@ -2,12 +2,6 @@
 
 import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { ChevronRight } from "lucide-react";
 
 type Crumb = {
@@ -39,29 +33,27 @@ export function BreadcrumbNav({ items, className }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
       />
-      <Breadcrumb className={className}>
-        <BreadcrumbList>
-          <BreadcrumbItem>
+      <nav aria-label="Breadcrumb" className={className}>
+        <ol className="flex items-center gap-1.5 flex-wrap">
+          <li className="flex items-center">
             <Link href="/" className="no-style text-sm text-muted-foreground hover:text-foreground transition-colors">
               {pt("breadcrumb_home")}
             </Link>
-          </BreadcrumbItem>
+          </li>
           {items.map((item, i) => (
-            <BreadcrumbItem key={item.href} className="flex items-center gap-1.5">
-              <BreadcrumbSeparator>
-                <ChevronRight className="h-3 w-3" />
-              </BreadcrumbSeparator>
+            <li key={item.href} className="flex items-center gap-1.5">
+              <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
               {i === items.length - 1 ? (
-                <span className="text-sm text-foreground font-medium">{item.label}</span>
+                <span className="text-sm text-foreground font-medium" aria-current="page">{item.label}</span>
               ) : (
                 <Link href={item.href} className="no-style text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {item.label}
                 </Link>
               )}
-            </BreadcrumbItem>
+            </li>
           ))}
-        </BreadcrumbList>
-      </Breadcrumb>
+        </ol>
+      </nav>
     </>
   );
 }
