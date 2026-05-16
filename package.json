@@ -11,7 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "cf:build": "npx @cloudflare/next-on-pages",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate 2>/dev/null || true"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.2",
