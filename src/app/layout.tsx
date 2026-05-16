@@ -18,8 +18,6 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: {
     default: "AI Tools for Real Estate — Find, Compare & Choose the Best AI Tools",

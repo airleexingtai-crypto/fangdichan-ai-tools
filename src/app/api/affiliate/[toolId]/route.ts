@@ -1,8 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 // /out/[toolId]?ref=page-slug → 302 redirect to actual affiliate URL
 export async function GET(
   request: NextRequest,
