@@ -29,7 +29,7 @@ export default function ContactPage() {
 
       <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
       <p className="text-muted-foreground text-lg mb-10">
-        Have a question, suggestion, or want to list your AI tool? We'd love to hear from you.
+        Have a question, suggestion, or want to list your AI tool? WeWe'dapos;d love to hear from you.
       </p>
 
       <div className="space-y-6">
