@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "scripts",
-    "ai-workflows"
+    "ai-workflows",
+    "prisma"
   ]
 }
