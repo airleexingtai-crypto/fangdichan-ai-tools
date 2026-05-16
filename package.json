@@ -10,7 +10,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "cf:build": "npx @cloudflare/next-on-pages",
+    "cf:build": "npx @opennextjs/cloudflare build",
     "postinstall": "prisma generate 2>/dev/null || true"
   },
   "dependencies": {
