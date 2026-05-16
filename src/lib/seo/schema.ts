@@ -2,7 +2,7 @@
 // Coverage: Organization, WebSite, SoftwareApplication, FAQ, HowTo, Article,
 //           BreadcrumbList, Dataset, DefinedTerm, CollectionPage, ItemList
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com";
 const SITE_NAME = "AI Tools for Real Estate";
 
 // ── Site-level ─────────────────────────────────
@@ -15,7 +15,6 @@ export function generateOrganizationSchema() {
     url: SITE_URL,
     description: "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, and side-by-side comparisons.",
     logo: `${SITE_URL}/logo.png`,
-    sameAs: [],
   };
 }
 
@@ -32,7 +31,11 @@ export function generateWebSiteSchema(searchUrl: string) {
         "@type": "EntryPoint",
         urlTemplate: `${searchUrl}?q={search_term_string}`,
       },
-      "query-input": "required name=search_term_string",
+      "query-input": {
+        "@type": "PropertyValueSpecification",
+        valueRequired: true,
+        valueName: "search_term_string",
+      },
     },
   };
 }

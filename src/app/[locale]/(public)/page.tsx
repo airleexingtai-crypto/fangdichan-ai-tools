@@ -18,9 +18,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generatePageMeta({
     title: locale === "zh"
       ? "最佳 AI 工具导航 — 房地产专业版 | 发现·对比·选择"
-      : "Best AI Tools for Real Estate — Find, Compare & Choose",
+      : locale === "ko"
+        ? "최고의 AI 도구 — 부동산 전문가를 위한 | 검색·비교·선택"
+        : locale === "ja"
+          ? "最高のAIツール — 不動産プロフェッショナル向け | 検索·比較·選択"
+          : "Best AI Tools for Real Estate — Find, Compare & Choose",
     description: t("hero_subtitle"),
-    path: `/${locale}`,
+    path: locale === "en" ? "/" : `/${locale}`,
+    locale,
   });
 }
 
@@ -60,7 +65,7 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema(`${process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate"}/${locale}/search`)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema(`${process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com"}/${locale}/search`)) }} />
 
       {/* Hero */}
       <section className="relative overflow-hidden">

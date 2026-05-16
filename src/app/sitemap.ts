@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com";
 
   const [tools, categories, tutorials, stats, comparisons, blogs, glossary] = await Promise.all([
     supabase.from("Tool").select("slug, updated_at").eq("status", "PUBLISHED"),
@@ -14,11 +14,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     supabase.from("GlossaryTerm").select("slug, updated_at").eq("status", "PUBLISHED"),
   ]);
 
-  // Helper: generate bilingual URLs — en has no prefix, zh uses /zh/ prefix
-  const bilingual = (path: string, lastmod: Date, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) => [
-    { url: `${baseUrl}${path}`, lastModified: lastmod, changeFrequency: freq, priority },
-    { url: `${baseUrl}/zh${path}`, lastModified: lastmod, changeFrequency: freq, priority: priority - 0.1 },
-  ];
+  // All supported locales — en has no prefix, others use /locale prefix
+  const locales = ["", "/ko", "/ja", "/de", "/it", "/fr"]; // zh is handled separately for content translations
+  const allLocales = ["", "/zh", "/ko", "/ja", "/de", "/it", "/fr"];
+
+  const multilingual = (path: string, lastmod: Date, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) =>
+    allLocales.map((prefix) => ({
+      url: `${baseUrl}${prefix}${path}`,
+      lastModified: lastmod,
+      changeFrequency: freq,
+      priority: prefix ? priority - 0.1 : priority,
+    }));
+
+  const bilingual = (path: string, lastmod: Date, freq: MetadataRoute.Sitemap[number]["changeFrequency"], priority: number) =>
+    multilingual(path, lastmod, freq, priority);
 
   const staticPages: MetadataRoute.Sitemap = [
     ...bilingual("", new Date(), "daily", 1.0),

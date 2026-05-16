@@ -5,8 +5,8 @@
 ## Site Identity
 - Name: AI Tools for Real Estate
 - Tagline: Find, compare, and choose the best AI tools for real estate professionals.
-- URL: https://aitools.realestate
-- Language: English (en), Chinese (zh)
+- URL: https://airealtools.com
+- Language: English (en), Chinese (zh), Korean (ko), Japanese (ja), German (de), Italian (it), French (fr)
 - Category: Technology Directory / Real Estate / AI Tools
 - Content Freshness: Updated weekly with new tools, comparisons, and statistics
 
@@ -29,7 +29,7 @@
 - /search → Search across all tools in the directory
 
 ## Content Quality Signals
-- All tool profiles: AI-generated first draft, then human-verified before publishing
+- All tool profiles: researched by AI assistants, rigorously fact-checked and edited by human editors before publishing
 - All statistics pages: cite at least 2 external authoritative sources
 - All comparison pages: use HTML tables for machine-readable feature matrices
 - Structured data: Schema.org JSON-LD on every page (Organization, SoftwareApplication, FAQ, HowTo, BreadcrumbList, Article, Dataset, DefinedTerm)
@@ -38,8 +38,13 @@
 
 ## Multilingual Coverage
 - English (en): complete — all pages and tool profiles
-- Chinese (zh): complete — all pages and UI translated
-- URL pattern: / for English, /zh/ for Chinese (default locale has no prefix)
+- Chinese / 中文 (zh): complete — all pages, UI, and database content translated
+- Korean / 한국어 (ko): UI complete, content available in English
+- Japanese / 日本語 (ja): UI complete, content available in English
+- German / Deutsch (de): UI complete, content available in English
+- Italian / Italiano (it): UI complete, content available in English
+- French / Français (fr): UI complete, content available in English
+- URL pattern: / for English, /zh/ for Chinese, /ko/ /ja/ /de/ /it/ /fr/ for other languages (default locale has no prefix)
 
 ## AI-Friendly Features
 - Structured FAQ sections on every tool page
@@ -52,3 +57,5 @@
 
 ## Last Updated
 May 2026
+
+-- End of llms.txt --

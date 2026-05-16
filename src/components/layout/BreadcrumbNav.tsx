@@ -16,15 +16,19 @@ type Props = {
 
 export function BreadcrumbNav({ items, className }: Props) {
   const pt = useTranslations("pages");
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
   const ldJson = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
-      "@type": "ListItem",
-      position: i + 2,
-      name: item.label,
-      item: `${process.env.NEXT_PUBLIC_SITE_URL}${item.href}`,
-    })),
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: pt("breadcrumb_home"), item: baseUrl },
+      ...items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 2,
+        name: item.label,
+        item: `${baseUrl}${item.href}`,
+      })),
+    ],
   };
 
   return (

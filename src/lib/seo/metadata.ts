@@ -1,8 +1,13 @@
 import { Metadata } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com";
 const SITE_NAME = "AI Tools for Real Estate";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
+
+const LOCALE_MAP: Record<string, string> = {
+  en: "en_US", zh: "zh_CN", ko: "ko_KR", ja: "ja_JP",
+  de: "de_DE", it: "it_IT", fr: "fr_FR",
+};
 
 type PageMeta = {
   title: string;
@@ -13,6 +18,7 @@ type PageMeta = {
   publishedAt?: string;
   updatedAt?: string;
   noIndex?: boolean;
+  locale?: string;
 };
 
 export function generatePageMeta({
@@ -24,6 +30,7 @@ export function generatePageMeta({
   publishedAt,
   updatedAt,
   noIndex = false,
+  locale = "en",
 }: PageMeta): Metadata {
   const url = `${SITE_URL}${path}`;
   const desc = description.slice(0, 160);
@@ -42,7 +49,7 @@ export function generatePageMeta({
       url,
       siteName: SITE_NAME,
       type,
-      locale: "en_US",
+      locale: LOCALE_MAP[locale] || "en_US",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
       ...(publishedAt && { publishedTime: publishedAt }),
       ...(updatedAt && { modifiedTime: updatedAt }),

@@ -76,16 +76,12 @@ export default async function ToolsPage({ params, searchParams }: Props) {
     return `${lhref("/tools")}?${p.toString()}`;
   };
 
-  const sortLabels: Record<string, Record<string, string>> = {
-    en: { popular: "Top Rated", newest: "Newest", rating: "Most Reviewed", price_low: "Name (A-Z)" },
-    zh: { popular: "评分最高", newest: "最新发布", rating: "最多评价", price_low: "名称 (A-Z)" },
+  const sortLabels: Record<string, string> = {
+    popular: ct("sort_top_rated"), newest: ct("sort_newest"), rating: ct("sort_most_reviewed"), price_low: ct("sort_name_az"),
   };
-  const sl = sortLabels[locale] || sortLabels.en;
-  const pricingLabels: Record<string, Record<string, string>> = {
-    en: { FREE: "Free", FREEMIUM: "Freemium", PAID: "Paid", ENTERPRISE: "Enterprise", FREE_TRIAL: "Free Trial" },
-    zh: { FREE: "免费", FREEMIUM: "免费增值", PAID: "付费", ENTERPRISE: "企业版", FREE_TRIAL: "免费试用" },
+  const pricingLabels: Record<string, string> = {
+    FREE: ct("pricing_free"), FREEMIUM: ct("pricing_freemium"), PAID: ct("pricing_paid"), ENTERPRISE: ct("pricing_enterprise"), FREE_TRIAL: ct("pricing_free_trial"),
   };
-  const pl = pricingLabels[locale] || pricingLabels.en;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -106,7 +102,7 @@ export default async function ToolsPage({ params, searchParams }: Props) {
             <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input name="search" defaultValue={search} placeholder={locale === "zh" ? "搜索工具..." : "Search tools..."} className="pl-8 h-9 text-sm" />
+                <Input name="search" defaultValue={search} placeholder={ct("search_placeholder")} className="pl-8 h-9 text-sm" />
               </div>
               <input type="hidden" name="sort" value={sortKey} />
               {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
@@ -114,21 +110,21 @@ export default async function ToolsPage({ params, searchParams }: Props) {
             </form>
 
             <div>
-              <h3 className="font-semibold text-sm mb-2">{locale === "zh" ? "定价模式" : "Pricing"}</h3>
+              <h3 className="font-semibold text-sm mb-2">{ct("pricing_label")}</h3>
               <div className="flex flex-wrap gap-1.5">
                 <Link href={buildUrl({ pricing: "" })} className="no-style">
                   <Badge variant={!pricing ? "default" : "outline"} className="cursor-pointer text-xs">{ct("all")}</Badge>
                 </Link>
                 {PRICING_FILTERS.map((p) => (
                   <Link key={p} href={buildUrl({ pricing: p })} className="no-style">
-                    <Badge variant={pricing === p ? "default" : "outline"} className="cursor-pointer text-xs">{pl[p]}</Badge>
+                    <Badge variant={pricing === p ? "default" : "outline"} className="cursor-pointer text-xs">{pricingLabels[p]}</Badge>
                   </Link>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-sm mb-2">{locale === "zh" ? "分类" : "Categories"}</h3>
+              <h3 className="font-semibold text-sm mb-2">{ct("category_label")}</h3>
               <div className="space-y-1">
                 <Link href={buildUrl({ category: "" })} className="no-style">
                   <div className={`text-sm px-2 py-1 rounded-md transition-colors ${!categorySlug ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:text-foreground"}`}>

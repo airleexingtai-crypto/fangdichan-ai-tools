@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "Discover and compare the best AI tools for real estate professionals. Pricing, features, reviews, side-by-side comparisons, tutorials, and industry statistics — all in one place.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com"),
   authors: [{ name: "AI Tools for Real Estate" }],
   creator: "AI Tools for Real Estate",
   publisher: "AI Tools for Real Estate",
@@ -56,9 +56,16 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-  verification: {
-    // Placeholders — add real values when available
-    // google: "your-google-site-verification",
+  alternates: {
+    languages: {
+      en: "/en",
+      zh: "/zh",
+      ko: "/ko",
+      ja: "/ja",
+      de: "/de",
+      it: "/it",
+      fr: "/fr",
+    },
   },
   category: "Technology",
 };

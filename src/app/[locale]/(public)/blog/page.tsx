@@ -61,10 +61,8 @@ export default async function BlogPage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generateCollectionPageSchema(
-              locale === "zh" ? "AI 房地产博客" : "AI Real Estate Blog",
-              locale === "zh"
-                ? "AI在房地产领域的最新趋势、指南和分析"
-                : "Expert insights on AI tools, trends, and strategies for real estate professionals.",
+              t("blog_title"),
+              t("blog_desc"),
               locale === "en" ? "/blog" : `/${locale}/blog`,
               displayPosts?.length,
             ),
@@ -98,7 +96,7 @@ export default async function BlogPage({ params }: Props) {
                     {post.published_at && (
                       <span>
                         {new Date(post.published_at).toLocaleDateString(
-                          locale === "zh" ? "zh-CN" : "en-US",
+                          locale === "zh" ? "zh-CN" : locale === "ko" ? "ko-KR" : locale === "ja" ? "ja-JP" : locale === "de" ? "de-DE" : locale === "it" ? "it-IT" : locale === "fr" ? "fr-FR" : "en-US",
                           { month: "short", day: "numeric", year: "numeric" },
                         )}
                       </span>

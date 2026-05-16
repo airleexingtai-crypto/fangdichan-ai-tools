@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <span className="text-border">|</span>
                 <span>
                   {new Date(post.published_at).toLocaleDateString(
-                    locale === "zh" ? "zh-CN" : "en-US",
+                    locale === "zh" ? "zh-CN" : locale === "ko" ? "ko-KR" : locale === "ja" ? "ja-JP" : locale === "de" ? "de-DE" : locale === "it" ? "it-IT" : locale === "fr" ? "fr-FR" : "en-US",
                     { month: "long", day: "numeric", year: "numeric" },
                   )}
                 </span>

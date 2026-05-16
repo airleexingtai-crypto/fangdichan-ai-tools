@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aitools.realestate";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://airealtools.com";
 
   return {
     rules: [
@@ -22,6 +22,31 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "PerplexityBot",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "ChatGPT-User",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "OAI-SearchBot",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "Google-Extended",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "Bytespider",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "CCBot",
         allow: "/",
         disallow: ["/api/", "/admin/"],
       },
