@@ -1,59 +1,50 @@
-2026-05-16T05:44:03.122Z	Initializing build environment...
-2026-05-16T05:44:04.692Z	Success: Finished initializing build environment
-2026-05-16T05:44:05.173Z	Cloning repository...
-2026-05-16T05:44:06.224Z	Restoring from dependencies cache
-2026-05-16T05:44:06.228Z	Restoring from build output cache
-2026-05-16T05:44:07.050Z	Detected the following tools from environment: nodejs@22.22.3, npm@10.9.2
-2026-05-16T05:44:07.051Z	Installing nodejs 22.22.3
-2026-05-16T05:44:11.588Z	Installing project dependencies: npm clean-install --progress=false
-2026-05-16T05:44:16.645Z	npm warn ERESOLVE overriding peer dependency
-2026-05-16T05:44:16.645Z	npm warn While resolving: @opennextjs/aws@4.0.2
-2026-05-16T05:44:16.645Z	npm warn Found: next@15.5.2
-2026-05-16T05:44:16.645Z	npm warn node_modules/next
-2026-05-16T05:44:16.645Z	npm warn   next@"15.5.2" from the root project
-2026-05-16T05:44:16.646Z	npm warn   2 more (@cloudflare/next-on-pages, next-intl)
-2026-05-16T05:44:16.646Z	npm warn
-2026-05-16T05:44:16.646Z	npm warn Could not resolve dependency:
-2026-05-16T05:44:16.646Z	npm warn peer next@">=15.5.18 <16 || >=16.2.6" from @opennextjs/aws@4.0.2
-2026-05-16T05:44:16.646Z	npm warn node_modules/@opennextjs/aws
-2026-05-16T05:44:16.646Z	npm warn   @opennextjs/aws@"4.0.2" from @opennextjs/cloudflare@1.19.10
-2026-05-16T05:44:16.646Z	npm warn   node_modules/@opennextjs/cloudflare
-2026-05-16T05:44:16.646Z	npm warn
-2026-05-16T05:44:16.651Z	npm warn Conflicting peer dependency: next@16.2.6
-2026-05-16T05:44:16.651Z	npm warn node_modules/next
-2026-05-16T05:44:16.651Z	npm warn   peer next@">=15.5.18 <16 || >=16.2.6" from @opennextjs/aws@4.0.2
-2026-05-16T05:44:16.651Z	npm warn   node_modules/@opennextjs/aws
-2026-05-16T05:44:16.652Z	npm warn     @opennextjs/aws@"4.0.2" from @opennextjs/cloudflare@1.19.10
-2026-05-16T05:44:16.652Z	npm warn     node_modules/@opennextjs/cloudflare
-2026-05-16T05:44:16.655Z	npm error code ERESOLVE
-2026-05-16T05:44:16.655Z	npm error ERESOLVE could not resolve
-2026-05-16T05:44:16.655Z	npm error
-2026-05-16T05:44:16.655Z	npm error While resolving: @opennextjs/cloudflare@1.19.10
-2026-05-16T05:44:16.655Z	npm error Found: next@15.5.2
-2026-05-16T05:44:16.655Z	npm error node_modules/next
-2026-05-16T05:44:16.655Z	npm error   next@"15.5.2" from the root project
-2026-05-16T05:44:16.655Z	npm error   peer next@">=14.3.0 && <=15.5.2" from @cloudflare/next-on-pages@1.13.16
-2026-05-16T05:44:16.655Z	npm error   node_modules/@cloudflare/next-on-pages
-2026-05-16T05:44:16.656Z	npm error     @cloudflare/next-on-pages@"^1.13.16" from the root project
-2026-05-16T05:44:16.656Z	npm error   1 more (next-intl)
-2026-05-16T05:44:16.656Z	npm error
-2026-05-16T05:44:16.656Z	npm error Could not resolve dependency:
-2026-05-16T05:44:16.656Z	npm error peer next@">=15.5.18 <16 || >=16.2.6" from @opennextjs/cloudflare@1.19.10
-2026-05-16T05:44:16.656Z	npm error node_modules/@opennextjs/cloudflare
-2026-05-16T05:44:16.656Z	npm error   @opennextjs/cloudflare@"^1.19.10" from the root project
-2026-05-16T05:44:16.656Z	npm error
-2026-05-16T05:44:16.656Z	npm error Conflicting peer dependency: next@16.2.6
-2026-05-16T05:44:16.656Z	npm error node_modules/next
-2026-05-16T05:44:16.656Z	npm error   peer next@">=15.5.18 <16 || >=16.2.6" from @opennextjs/cloudflare@1.19.10
-2026-05-16T05:44:16.656Z	npm error   node_modules/@opennextjs/cloudflare
-2026-05-16T05:44:16.656Z	npm error     @opennextjs/cloudflare@"^1.19.10" from the root project
-2026-05-16T05:44:16.656Z	npm error
-2026-05-16T05:44:16.657Z	npm error Fix the upstream dependency conflict, or retry
-2026-05-16T05:44:16.657Z	npm error this command with --force or --legacy-peer-deps
-2026-05-16T05:44:16.657Z	npm error to accept an incorrect (and potentially broken) dependency resolution.
-2026-05-16T05:44:16.657Z	npm error
-2026-05-16T05:44:16.657Z	npm error
-2026-05-16T05:44:16.657Z	npm error For a full report see:
-2026-05-16T05:44:16.657Z	npm error /opt/buildhome/.npm/_logs/2026-05-16T05_44_11_795Z-eresolve-report.txt
-2026-05-16T05:44:16.657Z	npm error A complete log of this run can be found in: /opt/buildhome/.npm/_logs/2026-05-16T05_44_11_795Z-debug-0.log
-2026-05-16T05:44:17.121Z	Failed: error occurred while installing tools or dependencies
+2026-05-16T05:47:13.578Z	Initializing build environment...
+2026-05-16T05:47:13.578Z	Initializing build environment...
+2026-05-16T05:48:04.692Z	Success: Finished initializing build environment
+2026-05-16T05:48:05.375Z	Cloning repository...
+2026-05-16T05:48:06.420Z	Restoring from dependencies cache
+2026-05-16T05:48:06.423Z	Restoring from build output cache
+2026-05-16T05:48:07.137Z	Detected the following tools from environment: nodejs@22.22.3, npm@10.9.2
+2026-05-16T05:48:07.137Z	Installing nodejs 22.22.3
+2026-05-16T05:48:11.763Z	Installing project dependencies: npm clean-install --progress=false
+2026-05-16T05:48:24.068Z	npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2026-05-16T05:48:26.001Z	npm warn deprecated glob@9.3.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-05-16T05:48:46.723Z	
+2026-05-16T05:48:46.725Z	> gongju@0.1.0 postinstall
+2026-05-16T05:48:46.725Z	> prisma generate 2>/dev/null || true
+2026-05-16T05:48:46.725Z	
+2026-05-16T05:48:47.831Z	
+2026-05-16T05:48:47.831Z	added 1064 packages, and audited 1065 packages in 36s
+2026-05-16T05:48:47.832Z	
+2026-05-16T05:48:47.832Z	360 packages are looking for funding
+2026-05-16T05:48:47.832Z	  run `npm fund` for details
+2026-05-16T05:48:47.923Z	
+2026-05-16T05:48:47.923Z	8 moderate severity vulnerabilities
+2026-05-16T05:48:47.923Z	
+2026-05-16T05:48:47.923Z	To address all issues (including breaking changes), run:
+2026-05-16T05:48:47.923Z	  npm audit fix --force
+2026-05-16T05:48:47.923Z	
+2026-05-16T05:48:47.923Z	Run `npm audit` for details.
+2026-05-16T05:48:48.241Z	Executing user build command: npm run cf:build
+2026-05-16T05:48:48.491Z	
+2026-05-16T05:48:48.492Z	> gongju@0.1.0 cf:build
+2026-05-16T05:48:48.492Z	> npx @opennextjs/cloudflare build
+2026-05-16T05:48:48.492Z	
+2026-05-16T05:48:50.436Z	node:internal/modules/package_json_reader:314
+2026-05-16T05:48:50.436Z	  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+2026-05-16T05:48:50.437Z	        ^
+2026-05-16T05:48:50.440Z	
+2026-05-16T05:48:50.440Z	Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'esbuild' imported from /opt/buildhome/repo/node_modules/@opennextjs/cloudflare/dist/cli/build/bundle-server.js
+2026-05-16T05:48:50.440Z	    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+2026-05-16T05:48:50.440Z	    at packageResolve (node:internal/modules/esm/resolve:768:81)
+2026-05-16T05:48:50.440Z	    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+2026-05-16T05:48:50.440Z	    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+2026-05-16T05:48:50.440Z	    at #cachedDefaultResolve (node:internal/modules/esm/loader:747:20)
+2026-05-16T05:48:50.440Z	    at ModuleLoader.resolve (node:internal/modules/esm/loader:724:38)
+2026-05-16T05:48:50.441Z	    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:320:38)
+2026-05-16T05:48:50.441Z	    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {
+2026-05-16T05:48:50.441Z	  code: 'ERR_MODULE_NOT_FOUND'
+2026-05-16T05:48:50.441Z	}
+2026-05-16T05:48:50.441Z	
+2026-05-16T05:48:50.441Z	Node.js v22.22.3
+2026-05-16T05:48:50.481Z	Failed: error occurred while running build command
